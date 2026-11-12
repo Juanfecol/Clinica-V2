@@ -964,3 +964,27 @@ body {
     transform: none !important;
   }
 }
+
+/* ==========================================================================
+   PROCESS CARDS — STACKING CARDS WITH SCALE & ROTATION (ROLL OUT STUDIOS REF)
+   ========================================================================== */
+.process-cards {
+  position: relative;
+  width: 100%;
+}
+
+.process-card-slot {
+  position: relative;
+  width: 100%;
+}
+
+.process-card {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-card {
+    transform: none !important;
+  }
+}
+

@@ -6,6 +6,7 @@ import ChatbotModal from './components/ChatbotModal';
 import { openLeadConnectorWidget } from './utils/leadConnector';
 import ModularReveal from './components/ModularReveal';
 import { TreatmentRibbonItem } from './components/TreatmentRibbonItem';
+import { TreatmentProcessCards } from './components/TreatmentProcessCards';
 import { MobileQuickBar } from './components/MobileQuickBar';
 import { GOOGLE_REVIEWS } from './data/reviewsData';
 import {
@@ -184,7 +185,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     role: 'Dentisteria Estética, Endodontia & Cirurgia Oral',
     omd: 'OMD n.º [Cédula]',
     specialty: 'Especialista em tratamento de canais radiculares, restaurações e próteses',
-    img: 'https://clinica-santa-maria-dos-olivais.b-cdn.net/Clinica%20Santa%20Maria%20Olivais-227.jpeg',
+    img: '/dr_tomas_padded.jpg',
     imagePosition: '50% 0%',
   },
   {
@@ -955,86 +956,35 @@ export default function App() {
       {/* =====================================================
            4. TRATAMENTOS (HOVER DINÁMICO + SALTO A MARCAÇÃO)
            ===================================================== */}
-      <section id="tratamentos" className="py-28 md:py-44 bg-paper">
-        <div className="container-page">
+      {/* =====================================================
+           4. TRATAMENTOS (PROCESS CARDS APILÁVEIS A PANTALLA COMPLETA)
+           ===================================================== */}
+      <section id="tratamentos" className="pt-24 md:pt-36 bg-paper relative">
+        <div className="container-page mb-12 md:mb-16">
           <ModularReveal>
             <p className="eyebrow text-muted mb-4">TRATAMENTOS</p>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 md:mb-20">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <h2 className="section-heading">
                 Cuidados pensados <em>ao<br />detalhe.</em>
               </h2>
-              <p className="text-[13.5px] text-muted max-w-sm leading-relaxed">
-                Passe o cursor sobre os tratamentos para consultar as especificações clínicas e a tecnologia aplicada.
+              <p className="text-[13.5px] text-muted max-w-md leading-relaxed">
+                Explore as 09 especialidades da clínica num percurso com tecnologia avançada e reabilitação personalizada.
               </p>
             </div>
           </ModularReveal>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-            {/* Lista de tratamentos (Lado esquerdo) - Cinta en escalera reactiva al scroll con reentrada */}
-            <div className="lg:col-span-7 border-t border-rule">
-              {TREATMENTS.map((t, index) => {
-                const isActive = activeTreatment.id === t.id;
-                return (
-                  <TreatmentRibbonItem
-                    key={t.id}
-                    treatment={t}
-                    index={index}
-                    isActive={isActive}
-                    onHover={handleTreatmentHover}
-                    onClick={setActiveTreatment}
-                    onOpenPriceModal={(id) => {
-                      setPriceModalTreatmentId(id);
-                      setIsPriceModalOpen(true);
-                    }}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Painel do lado direito: imagem e explicação com LiquidCard */}
-            <div className="lg:col-span-5 lg:sticky lg:top-28">
-              <ModularReveal delay={2} enableMouseGlow>
-                <LiquidCard className="liquid-card-light p-4 sm:p-5 rounded-3xl">
-                  <div className="aspect-[4/4.5] w-full overflow-hidden rounded-2xl bg-stone mb-4 relative shadow-sm">
-                    <img
-                      id="treatment-img"
-                      src={activeTreatment.img}
-                      alt={activeTreatment.title}
-                      style={{
-                        opacity: treatmentImageOpacity,
-                        transform: `scale(${treatmentImageScale})`,
-                      }}
-                      className="w-full h-full object-cover transition-all duration-500 ease-out"
-                    />
-                  </div>
-                  <p id="treatment-caption" className="text-[14px] text-ink/80 leading-relaxed max-w-sm">
-                    {activeTreatment.caption}
-                  </p>
-                  <div className="mt-4 pt-3.5 border-t border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPriceModalTreatmentId(activeTreatment.id);
-                        setIsPriceModalOpen(true);
-                      }}
-                      className="text-xs font-semibold text-clinic-navy hover:text-clinic-lavender underline transition-colors cursor-pointer text-left"
-                    >
-                      Ver tabela de preços de {activeTreatment.title} →
-                    </button>
-                    <LiquidButton
-                      type="button"
-                      variant="primary"
-                      onClick={() => handleOpenChatbot(activeTreatment.title)}
-                      className="!px-4 !py-2 !text-xs !font-semibold shadow-md shrink-0"
-                    >
-                      <span>Marcar consulta</span>
-                    </LiquidButton>
-                  </div>
-                </LiquidCard>
-              </ModularReveal>
-            </div>
-          </div>
         </div>
+
+        {/* Tarjetas apilables a pantalla completa con escala progresiva, rotación y oscurecimiento (referencia Roll Out Studios) */}
+        <TreatmentProcessCards
+          treatments={TREATMENTS}
+          onOpenPriceModal={(id) => {
+            setPriceModalTreatmentId(id);
+            setIsPriceModalOpen(true);
+          }}
+          onBookTreatment={(title) => {
+            handleOpenChatbot(title);
+          }}
+        />
       </section>
 
       {/* =====================================================
@@ -1198,6 +1148,13 @@ export default function App() {
                       <img
                         src={member.img}
                         alt={member.name}
+                        onError={(e) => {
+                          if (member.id === 'team-5') {
+                            const target = e.currentTarget;
+                            target.onerror = null;
+                            target.src = 'https://clinica-santa-maria-dos-olivais.b-cdn.net/Clinica%20Santa%20Maria%20Olivais-227.jpeg';
+                          }
+                        }}
                         style={{
                           objectPosition: member.imagePosition || '50% 0%',
                           transform: member.scale ? `scale(${member.scale})` : undefined,
