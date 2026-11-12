@@ -184,8 +184,8 @@ const TEAM_MEMBERS: TeamMember[] = [
     role: 'Dentisteria Estética, Endodontia & Cirurgia Oral',
     omd: 'OMD n.º [Cédula]',
     specialty: 'Especialista em tratamento de canais radiculares, restaurações e próteses',
-    img: '/dr_tomas_padded.jpg',
-    imagePosition: '50% 0%',
+    img: 'https://clinica-santa-maria-dos-olivais.b-cdn.net/Clinica%20Santa%20Maria%20Olivais-227.jpeg',
+    imagePosition: '50% 6%',
   },
   {
     id: 'team-6',
@@ -322,7 +322,7 @@ const FAQS = [
   },
 ];
 
-const MANIFESTO_TEXT = 'Uma boa consulta começa antes da cadeira. Começa quando alguém tem tempo para ouvir, explicar e decidir consigo o passo seguinte.';
+const MANIFESTO_TEXT = 'Por trás de cada sorriso existe uma história. Cuidamos de si com tempo, carinho e a tranquilidade de voltar a sorrir sem medos.';
 
 export default function App() {
   // Navigation header state
@@ -885,7 +885,7 @@ export default function App() {
             <p className="eyebrow text-muted mb-10">MANIFESTO</p>
             <p
               id="manifesto-scrub"
-              className="font-serif text-[clamp(2.1rem,4.3vw,3.9rem)] leading-[1.14] tracking-tight font-normal text-center"
+              className="font-serif text-[clamp(2.1rem,4.3vw,3.9rem)] leading-[1.18] tracking-tight font-normal text-center text-ink text-balance"
             >
               {manifestoWords.map((word, idx) => (
                 <span
@@ -1198,13 +1198,6 @@ export default function App() {
                       <img
                         src={member.img}
                         alt={member.name}
-                        onError={(e) => {
-                          if (member.id === 'team-5') {
-                            const target = e.currentTarget;
-                            target.onerror = null;
-                            target.src = 'https://clinica-santa-maria-dos-olivais.b-cdn.net/Clinica%20Santa%20Maria%20Olivais-227.jpeg';
-                          }
-                        }}
                         style={{
                           objectPosition: member.imagePosition || '50% 0%',
                           transform: member.scale ? `scale(${member.scale})` : undefined,
