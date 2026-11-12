@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>[Nome da Clínica] · Medicina dentária em Lisboa</title>
+  <meta name="description" content="Clínica de medicina dentária em Lisboa. Implantologia, ortodontia invisível, estética dentária e medicina dentária geral, com tempo, tecnologia e acompanhamento próximo." />
+  <meta name="theme-color" content="#14161A" />
+
+  <!-- Preload del primer fotograma original tal como en el código extraído -->
+  <link rel="preload" as="image" href="https://dentaria.cloudflagency.com/frames/desktop/frame_0001.webp" />
+
+  <!-- Tipografías Editoriales -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#14161A',
+            paper: '#F3EFE6',
+            stone: '#EAE4D8',
+            muted: '#78736A',
+            mutedInk: '#949088',
+            rule: 'rgba(20, 22, 26, 0.12)',
+            ruleDark: 'rgba(243, 239, 230, 0.14)',
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --ink: #14161A;
+      --paper: #F3EFE6;
+      --stone: #EAE4D8;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      overflow-x: hidden;
+      background-color: var(--paper);
+    }
+
+    /* Clases exactas del DOM original */
+    .h-viewport-l { height: 100lvh; }
+    .h-viewport-s { height: 100svh; }
+    .container-page {
+      width: 100%;
+      max-width: 1440px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: clamp(1.25rem, 4vw, 3.5rem);
+      padding-right: clamp(1.25rem, 4vw, 3.5rem);
+    }
+    .display {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      line-height: 0.96;
+      letter-spacing: -0.022em;
+    }
+    .hero-type {
+      color: #F3EFE6;
+    }
+    .hero-type em {
+      font-style: italic;
+      font-weight: 300;
+      color: rgba(243, 239, 230, 0.78);
+    }
+
+    .section-heading {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(2.5rem, 4.7vw, 4.65rem);
+      line-height: 1.02;
+      letter-spacing: -0.018em;
+    }
+    .section-heading em {
+      font-style: italic;
+      font-weight: 300;
+    }
+
+    .eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .grain-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .treatment-item .treatment-title {
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease;
+    }
+    .treatment-item.active .treatment-title,
+    .treatment-item:hover .treatment-title {
+      transform: translateX(14px);
+      font-style: italic;
+      color: #14161A;
+    }
+    .treatment-item .treatment-cta {
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .treatment-item.active .treatment-cta,
+    .treatment-item:hover .treatment-cta {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .faq-content {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+      opacity: 0;
+    }
+    .faq-row.open .faq-content {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+    .faq-row.open .faq-btn {
+      background-color: #14161A;
+      color: #F3EFE6;
+      border-color: #14161A;
+      transform: rotate(45deg);
+    }
+
+    .select-dark {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%23949088' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.2rem center;
+    }
+  </style>
+</head>
+
+<body class="selection:bg-ink selection:text-paper">
+
+  <div class="grain-overlay"></div>
+
+  <!-- =====================================================
+       NAVBAR FIJA ADAPTATIVA
+       ===================================================== -->
+  <header id="site-header" class="fixed inset-x-0 top-0 z-50 transition-all duration-500 py-5 text-paper">
+    <div class="container-page flex items-center justify-between">
+      <a href="#top" class="font-serif text-xl sm:text-[1.35rem] tracking-tight font-normal">
+        [Nome da Clínica]
+      </a>
+
+      <nav class="hidden md:flex items-center gap-9 text-[13px] tracking-wide">
+        <a href="#tratamentos" class="hover:opacity-65 transition-opacity">Tratamentos</a>
+        <a href="#primeira-consulta" class="hover:opacity-65 transition-opacity">Primeira consulta</a>
+        <a href="#equipa" class="hover:opacity-65 transition-opacity">Equipa</a>
+        <a href="#clinica" class="hover:opacity-65 transition-opacity">A clínica</a>
+        <a href="#perguntas" class="hover:opacity-65 transition-opacity">Perguntas</a>
+      </nav>
+
+      <a id="header-cta" href="#marcacao" class="px-6 py-2.5 rounded-full text-[12.5px] font-medium bg-paper text-ink hover:scale-105 transition-all duration-300">
+        Marcar
+      </a>
+    </div>
+  </header>
+
+  <!-- =====================================================
+       1. HERO SCROLLYTELLING CON SECUENCIA DE FRAMES .WEBP
+       ===================================================== -->
+  <section id="top" class="relative h-[360vh] bg-ink">
+    <div id="hero-sticky" class="sticky top-0 relative h-viewport-l overflow-hidden bg-ink">
+      
+      <!-- Estructura <picture> 1:1 con tu código extraído conectada a la secuencia de frames -->
+      <picture>
+        <source id="hero-source-mobile" media="(max-width: 1023px) and (orientation: portrait)" srcset="https://dentaria.cloudflagency.com/frames/mobile/frame_0001.webp" />
+        <img 
+          id="hero-sequence-img"
+          src="https://dentaria.cloudflagency.com/frames/desktop/frame_0001.webp" 
+          onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=2400&q=90';"
+          alt="" 
+          fetchpriority="high" 
+          class="absolute inset-0 h-full w-full object-cover will-change-transform origin-[38%_48%]"
+        />
+      </picture>
+
+      <!-- Gradientes exactos del código extraído -->
+      <div class="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/25 to-ink/35"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-ink/55 via-transparent to-transparent"></div>
+
+      <!-- Contenedor de los 3 pasos del Hero -->
+      <div class="absolute inset-x-0 top-0 h-viewport-s">
+        <div class="container-page relative h-full">
+          
+          <!-- PASO 01 / 03 -->
+          <div id="hero-beat-1" class="absolute inset-x-5 bottom-[22%] sm:inset-x-8 lg:inset-x-12 lg:bottom-[18%] will-change-transform">
+            <p class="display hero-type text-[clamp(2.75rem,7.2vw,7.5rem)] max-w-[13ch]">
+              A primeira coisa que as pessoas veem. <em>A última que esquecem.</em>
+            </p>
+          </div>
+
+          <!-- PASO 02 / 03 -->
+          <div id="hero-beat-2" class="absolute inset-x-5 bottom-[22%] sm:inset-x-8 lg:inset-x-12 lg:bottom-[18%] opacity-0 pointer-events-none will-change-transform">
+            <p class="eyebrow text-paper/75 mb-5">MEDICINA DENTÁRIA · LISBOA</p>
+            <p class="display hero-type text-[clamp(2.6rem,6.4vw,6.6rem)] max-w-[14ch]">
+              Medicina dentária feita com tempo, tecnologia e mãos certas.
+            </p>
+          </div>
+
+          <!-- PASO 03 / 03 -->
+          <div id="hero-beat-3" class="absolute inset-x-5 bottom-[20%] sm:inset-x-8 lg:inset-x-12 lg:bottom-[16%] opacity-0 pointer-events-none will-change-transform">
+            <p class="display hero-type text-[clamp(2.75rem,6.8vw,7rem)] max-w-[12ch] mb-9">
+              Um sorriso que <em>se nota</em> pela calma.
+            </p>
+            <div class="flex flex-wrap items-center gap-4">
+              <a href="#marcacao" class="px-7 py-3.5 rounded-full bg-paper text-ink text-[13px] font-medium inline-flex items-center gap-2.5 hover:bg-white transition">
+                Marcar consulta <span>→</span>
+              </a>
+              <a href="#marcacao" class="px-7 py-3.5 rounded-full border border-paper/35 bg-ink/30 backdrop-blur-md text-paper text-[13px] inline-flex items-center gap-2.5 hover:bg-paper/15 transition">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/></svg>
+                Falar por WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <!-- Pie del Hero: CONTINUAR A DESCER + Contador 01 / 03 -->
+          <div class="absolute inset-x-5 bottom-7 sm:inset-x-8 lg:inset-x-12 flex items-center justify-between text-paper/80">
+            <span id="hero-scroll-label" class="eyebrow transition-opacity duration-500">CONTINUAR A DESCER</span>
+            <div class="ml-auto font-serif text-base tracking-widest">
+              <span id="hero-step-num" class="text-paper">01</span>
+              <span class="text-paper/40 text-xs mx-1">/</span>
+              <span class="text-paper/40 text-xs">03</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       2. MANIFESTO (SCROLL WORD SCRUB)
+       ===================================================== -->
+  <section class="py-36 md:py-52 bg-paper">
+    <div class="container-page">
+      <div class="max-w-4xl mx-auto text-center">
+        <p class="eyebrow text-muted mb-10">MANIFESTO</p>
+        <p id="manifesto-scrub" class="font-serif text-[clamp(2.1rem,4.3vw,3.9rem)] leading-[1.14] tracking-tight font-normal">
+          Uma boa consulta começa antes da cadeira. Começa quando alguém tem tempo para ouvir, explicar e decidir consigo o passo seguinte.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       3. BANNER CONSULTA 3D CON PARALLAX INTERNO + 4 CIFRAS
+       ===================================================== -->
+  <section class="relative w-full h-[78vh] md:h-[90vh] overflow-hidden bg-ink">
+    <img 
+      data-parallax="0.22"
+      src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=2200&q=85" 
+      alt="Diagnóstico 3D em consulta" 
+      class="absolute -top-[13%] left-0 w-full h-[126%] object-cover object-center will-change-transform"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent"></div>
+
+    <div class="absolute inset-x-0 bottom-10 md:bottom-14">
+      <div class="container-page">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-paper">
+          <div class="border-t border-paper/25 pt-5">
+            <p class="font-serif text-4xl md:text-6xl font-light mb-2">18</p>
+            <p class="eyebrow text-paper/75">ANOS DE EXPERIÊNCIA</p>
+          </div>
+          <div class="border-t border-paper/25 pt-5">
+            <p class="font-serif text-4xl md:text-6xl font-light mb-2">2400+</p>
+            <p class="eyebrow text-paper/75">TRATAMENTOS POR ANO</p>
+          </div>
+          <div class="border-t border-paper/25 pt-5">
+            <p class="font-serif text-4xl md:text-6xl font-light mb-2">4,9</p>
+            <p class="eyebrow text-paper/75">AVALIAÇÃO GOOGLE</p>
+          </div>
+          <div class="border-t border-paper/25 pt-5">
+            <p class="font-serif text-4xl md:text-6xl font-light mb-2">9</p>
+            <p class="eyebrow text-paper/75">ESPECIALISTAS</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       4. TRATAMENTOS (HOVER DINÁMICO + SALTO A MARCAÇÃO)
+       ===================================================== -->
+  <section id="tratamentos" class="py-28 md:py-44 bg-paper">
+    <div class="container-page">
+      <p class="eyebrow text-muted mb-4">TRATAMENTOS</p>
+      <h2 class="section-heading mb-16 md:mb-24">
+        Cuidados pensados <em>ao<br />detalhe.</em>
+      </h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        
+        <div class="lg:col-span-7 border-t border-rule">
+          
+          <div class="treatment-item active flex items-center justify-between py-7 border-b border-rule cursor-pointer"
+               data-treatment="Implantologia"
+               data-img="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1200&q=85"
+               data-caption="Reposição de dentes em falta, planeada em imagem 3D.">
+            <div class="flex items-baseline gap-7">
+              <span class="text-xs font-serif text-muted">01</span>
+              <h3 class="treatment-title font-serif text-3xl md:text-[2.6rem] text-ink/75 font-light">Implantologia</h3>
+            </div>
+            <span class="treatment-cta text-xs text-muted flex items-center gap-1.5">Saber mais <span>→</span></span>
+          </div>
+
+          <div class="treatment-item flex items-center justify-between py-7 border-b border-rule cursor-pointer"
+               data-treatment="Ortodontia invisível"
+               data-img="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&w=1200&q=85"
+               data-caption="Alinhadores transparentes desenhados à medida do seu sorriso.">
+            <div class="flex items-baseline gap-7">
+              <span class="text-xs font-serif text-muted">02</span>
+              <h3 class="treatment-title font-serif text-3xl md:text-[2.6rem] text-ink/75 font-light">Ortodontia invisível</h3>
+            </div>
+            <span class="treatment-cta text-xs text-muted flex items-center gap-1.5">Saber mais <span>→</span></span>
+          </div>
+
+          <div class="treatment-item flex items-center justify-between py-7 border-b border-rule cursor-pointer"
+               data-treatment="Estética dentária"
+               data-img="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85"
+               data-caption="Facetas e restaurações que respeitam as proporções do rosto.">
+            <div class="flex items-baseline gap-7">
+              <span class="text-xs font-serif text-muted">03</span>
+              <h3 class="treatment-title font-serif text-3xl md:text-[2.6rem] text-ink/75 font-light">Estética dentária</h3>
+            </div>
+            <span class="treatment-cta text-xs text-muted flex items-center gap-1.5">Saber mais <span>→</span></span>
+          </div>
+
+          <div class="treatment-item flex items-center justify-between py-7 border-b border-rule cursor-pointer"
+               data-treatment="Branqueamento"
+               data-img="https://images.unsplash.com/photo-1559591937-abc36511183c?auto=format&fit=crop&w=1200&q=85"
+               data-caption="Luminosidade natural devolvida com protocolos clínicos seguros.">
+            <div class="flex items-baseline gap-7">
+              <span class="text-xs font-serif text-muted">04</span>
+              <h3 class="treatment-title font-serif text-3xl md:text-[2.6rem] text-ink/75 font-light">Branqueamento</h3>
+            </div>
+            <span class="treatment-cta text-xs text-muted flex items-center gap-1.5">Saber mais <span>→</span></span>
+          </div>
+
+          <div class="treatment-item flex items-center justify-between py-7 border-b border-rule cursor-pointer"
+               data-treatment="Medicina dentária geral"
+               data-img="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=85"
+               data-caption="Rotina, higiene oral e prevenção. A base de tudo o resto.">
+            <div class="flex items-baseline gap-7">
+              <span class="text-xs font-serif text-muted">05</span>
+              <h3 class="treatment-title font-serif text-3xl md:text-[2.6rem] text-ink/75 font-light">Medicina dentária geral</h3>
+            </div>
+            <span class="treatment-cta text-xs text-muted flex items-center gap-1.5">Saber mais <span>→</span></span>
+          </div>
+
+          <div class="treatment-item flex items-center justify-between py-7 border-b border-rule cursor-pointer"
+               data-treatment="Odontopediatria"
+               data-img="https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=1200&q=85"
+               data-caption="Consultas ao ritmo das crianças, para crescerem sem receio.">
+            <div class="flex items-baseline gap-7">
+              <span class="text-xs font-serif text-muted">06</span>
+              <h3 class="treatment-title font-serif text-3xl md:text-[2.6rem] text-ink/75 font-light">Odontopediatria</h3>
+            </div>
+            <span class="treatment-cta text-xs text-muted flex items-center gap-1.5">Saber mais <span>→</span></span>
+          </div>
+
+        </div>
+
+        <div class="lg:col-span-5 lg:sticky lg:top-28">
+          <div class="aspect-[4/4.6] w-full overflow-hidden bg-stone mb-4 relative">
+            <img 
+              id="treatment-img"
+              src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1200&q=85" 
+              alt="Tratamento" 
+              class="w-full h-full object-cover transition-all duration-700 ease-out scale-100"
+            />
+          </div>
+          <p id="treatment-caption" class="text-[13px] text-muted leading-relaxed max-w-sm">
+            Reposição de dentes em falta, planeada em imagem 3D.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       5. A PRIMEIRA CONSULTA (CON LÍNEA DE PROGRESO ANIMADA)
+       ===================================================== -->
+  <section id="primeira-consulta" class="py-28 md:py-44 bg-stone">
+    <div class="container-page">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-end mb-20">
+        <div class="lg:col-span-7">
+          <p class="eyebrow text-muted mb-4">A PRIMEIRA CONSULTA</p>
+          <h2 class="section-heading">
+            Começamos por <em>ouvir.</em>
+          </h2>
+        </div>
+        <div class="lg:col-span-5">
+          <div class="aspect-[16/10] overflow-hidden relative bg-paper">
+            <img 
+              data-parallax="0.16"
+              src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&fit=crop&w=1200&q=85" 
+              alt="Primeira consulta" 
+              class="absolute -top-[12%] left-0 w-full h-[124%] object-cover will-change-transform"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="relative pt-10">
+        <div class="hidden md:block absolute top-0 left-0 w-full h-[1px] bg-ink/15"></div>
+        <div id="consulta-progress-line" class="hidden md:block absolute top-0 left-0 h-[1px] bg-ink transition-all duration-150" style="width: 15%;"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
+          
+          <div class="relative pt-4">
+            <span class="hidden md:block w-2.5 h-2.5 rounded-full border border-ink bg-ink absolute -top-[15px] left-0"></span>
+            <p class="text-xs font-serif text-muted mb-4">01</p>
+            <h3 class="font-serif text-2xl md:text-[1.8rem] leading-snug mb-3">
+              Diagnóstico<br />com imagem<br />digital
+            </h3>
+            <p class="text-[13.5px] text-muted leading-relaxed max-w-xs">
+              Fotografia e radiografia digital. Mostramos-lhe o que vemos.
+            </p>
+          </div>
+
+          <div class="relative pt-4">
+            <span id="step-dot-2" class="hidden md:block w-2.5 h-2.5 rounded-full border border-ink/40 bg-stone absolute -top-[15px] left-0 transition-colors duration-300"></span>
+            <p class="text-xs font-serif text-muted mb-4">02</p>
+            <h3 class="font-serif text-2xl md:text-[1.8rem] leading-snug mb-3">
+              Plano e<br />orçamento<br />claros
+            </h3>
+            <p class="text-[13.5px] text-muted leading-relaxed max-w-xs">
+              Opções, tempos e custos por escrito, sem pressão.
+            </p>
+          </div>
+
+          <div class="relative pt-4">
+            <span id="step-dot-3" class="hidden md:block w-2.5 h-2.5 rounded-full border border-ink/40 bg-stone absolute -top-[15px] left-0 transition-colors duration-300"></span>
+            <p class="text-xs font-serif text-muted mb-4">03</p>
+            <h3 class="font-serif text-2xl md:text-[1.8rem] leading-snug mb-3">
+              Tratamento sem<br />pressas
+            </h3>
+            <p class="text-[13.5px] text-muted leading-relaxed max-w-xs">
+              O tempo que cada fase pede, sempre com a mesma equipa.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =====================================================
+       6. A EQUIPA (4 RETRATOS B&W CON VENTANA PARALLAX)
+       ===================================================== -->
+  <section id="equipa" class="py-28 md:py-44 bg-paper">
+    <div class="container-page">
+      <p class="eyebrow text-muted mb-4">A EQUIPA</p>
+      <h2 class="section-heading mb-16 md:mb-20 max-w-xl">
+        As mesmas <em>mãos</em>, do início ao fim.
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+        
+        <div class="group">
+          <div class="aspect-[3/3.8] overflow-hidden bg-stone mb-4 relative">
+            <img 
+              data-parallax="0.12"
+              src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=900&q=80" 
+              alt="[Nome]" 
+              class="absolute -top-[10%] left-0 w-full h-[120%] object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-700 will-change-transform"
+            />
+          </div>
+          <div class="flex items-start justify-between pt-1">
+            <div>
+              <h3 class="font-serif text-2xl text-ink">[Nome]</h3>
+              <p class="text-xs text-muted mt-0.5">Diretor clínico · Implantologia</p>
+            </div>
+            <div class="text-right text-[11px] text-muted leading-tight">
+              <p>OMD</p>
+              <p>n.º [Cédula]</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="aspect-[3/3.8] overflow-hidden bg-stone mb-4 relative">
+            <img 
+              data-parallax="0.12"
+              src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=900&q=80" 
+              alt="[Nome]" 
+              class="absolute -top-[10%] left-0 w-full h-[120%] object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-700 will-change-transform"
+            />
+          </div>
+          <div class="flex items-start justify-between pt-1">
+            <div>
+              <h3 class="font-serif text-2xl text-ink">[Nome]</h3>
+              <p class="text-xs text-muted mt-0.5">Ortodontia</p>
+            </div>
+            <div class="text-right text-[11px] text-muted leading-tight">
+              <p>OMD</p>
+              <p>n.º [Cédula]</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="aspect-[3/3.8] overflow-hidden bg-stone mb-4 relative">
+            <img 
+              data-parallax="0.12"
+              src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=900&q=80" 
+              alt="[Nome]" 
+              class="absolute -top-[10%] left-0 w-full h-[120%] object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-700 will-change-transform"
+            />
+          </div>
+          <div class="flex items-start justify-between pt-1">
+            <div>
+              <h3 class="font-serif text-2xl text-ink">[Nome]</h3>
+              <p class="text-xs text-muted mt-0.5">Estética dentária</p>
+            </div>
+            <div class="text-right text-[11px] text-muted leading-tight">
+              <p>OMD</p>
+              <p>n.º [Cédula]</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="aspect-[3/3.8] overflow-hidden bg-stone mb-4 relative">
+            <img 
+              data-parallax="0.12"
+              src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=80" 
+              alt="[Nome]" 
+              class="absolute -top-[10%] left-0 w-full h-[120%] object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-700 will-change-transform"
+            />
+          </div>
+          <div class="flex items-start justify-between pt-1">
+            <div>
+              <h3 class="font-serif text-2xl text-ink">[Nome]</h3>
+              <p class="text-xs text-muted mt-0.5">Odontopediatria</p>
+            </div>
+            <div class="text-right text-[11px] text-muted leading-tight">
+              <p>OMD</p>
+              <p>n.º [Cédula]</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       7. A CLÍNICA — STICKY HORIZONTAL SCROLL + PARALLAX INTERNO
+       ===================================================== -->
+  <section id="clinica" class="relative h-[360vh] bg-stone">
+    <div class="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center py-16">
+      
+      <div class="container-page mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 shrink-0">
+        <div>
+          <p class="eyebrow text-muted mb-3">A CLÍNICA</p>
+          <h2 class="section-heading">
+            Um espaço feito para <em>abrandar.</em>
+          </h2>
+        </div>
+        <p class="text-[13px] text-muted max-w-[230px] leading-relaxed">
+          Luz natural, travertino e silêncio, no centro de Lisboa.
+        </p>
+      </div>
+
+      <div class="w-full overflow-hidden">
+        <div id="clinica-horizontal-track" class="flex items-end gap-8 px-[clamp(1.25rem,4vw,3.5rem)] w-max will-change-transform">
+          
+          <div class="w-[82vw] sm:w-[500px] shrink-0">
+            <div class="aspect-[4/4.3] w-full overflow-hidden relative mb-3 bg-paper">
+              <img 
+                class="clinica-inner-img absolute top-0 -left-[13%] w-[126%] max-w-none h-full object-cover will-change-transform"
+                src="https://dentaria.cloudflagency.com/frames/desktop/frame_0001.webp"
+                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1400&q=85';"
+                alt="01 Receção" 
+              />
+            </div>
+            <p class="text-xs text-muted"><span class="font-serif mr-2">01</span> Receção</p>
+          </div>
+
+          <div class="w-[76vw] sm:w-[420px] shrink-0">
+            <div class="aspect-[3/3.9] w-full overflow-hidden relative mb-3 bg-paper">
+              <img 
+                class="clinica-inner-img absolute top-0 -left-[13%] w-[126%] max-w-none h-full object-cover will-change-transform"
+                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=85" 
+                alt="02 Corredor" 
+              />
+            </div>
+            <p class="text-xs text-muted"><span class="font-serif mr-2">02</span> Corredor</p>
+          </div>
+
+          <div class="w-[82vw] sm:w-[510px] shrink-0">
+            <div class="aspect-[4/4.3] w-full overflow-hidden relative mb-3 bg-paper">
+              <img 
+                class="clinica-inner-img absolute top-0 -left-[13%] w-[126%] max-w-none h-full object-cover will-change-transform"
+                src="https://images.unsplash.com/photo-1629909615184-74f495363b67?auto=format&fit=crop&w=1400&q=85" 
+                alt="03 Gabinete" 
+              />
+            </div>
+            <p class="text-xs text-muted"><span class="font-serif mr-2">03</span> Gabinete</p>
+          </div>
+
+          <div class="w-[72vw] sm:w-[390px] shrink-0">
+            <div class="aspect-[1/1.05] w-full overflow-hidden relative mb-3 bg-paper">
+              <img 
+                class="clinica-inner-img absolute top-0 -left-[13%] w-[126%] max-w-none h-full object-cover will-change-transform"
+                src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=85" 
+                alt="04 Detalhe" 
+              />
+            </div>
+            <p class="text-xs text-muted"><span class="font-serif mr-2">04</span> Detalhe</p>
+          </div>
+
+          <div class="w-[85vw] sm:w-[580px] shrink-0 pr-12">
+            <div class="aspect-[16/11] w-full overflow-hidden relative mb-3 bg-paper">
+              <img 
+                class="clinica-inner-img absolute top-0 -left-[13%] w-[126%] max-w-none h-full object-cover will-change-transform"
+                src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=85" 
+                alt="05 Sala de espera" 
+              />
+            </div>
+            <p class="text-xs text-muted"><span class="font-serif mr-2">05</span> Sala de espera</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =====================================================
+       8. BANNER MACRO SONRISA CON PARALLAX ("NOS DETALHES")
+       ===================================================== -->
+  <section class="relative w-full h-[75vh] md:h-[86vh] overflow-hidden bg-ink">
+    <img 
+      data-parallax="0.24"
+      src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=2200&q=85" 
+      alt="O cuidado também se vê nos detalhes" 
+      class="absolute -top-[13%] left-0 w-full h-[126%] object-cover object-center will-change-transform"
+    />
+    <div class="absolute inset-0 bg-gradient-to-r from-ink/65 via-ink/25 to-transparent"></div>
+    <div class="absolute inset-0 flex items-end pb-16 md:pb-24">
+      <div class="container-page">
+        <h2 class="section-heading text-paper max-w-lg">
+          O cuidado<br />
+          também se vê<br />
+          <em>nos detalhes.</em>
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       9. AVALIAÇÕES (CARRUSEL GOOGLE 01 / 04 A 04 / 04)
+       ===================================================== -->
+  <section class="py-28 md:py-44 bg-paper">
+    <div class="container-page">
+      <p class="eyebrow text-muted mb-4">AVALIAÇÕES</p>
+      <h2 class="section-heading mb-16 md:mb-24">
+        O que dizem <em>depois</em> da<br />consulta.
+      </h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        
+        <div class="lg:col-span-4">
+          <p class="font-serif text-7xl md:text-8xl font-light tracking-tight mb-3">4,9</p>
+          <div class="flex items-center gap-1 text-ink text-xs mb-3">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="text-xs text-muted leading-relaxed max-w-[220px] mb-5">
+            Avaliação média no Google, com base em [N.º] avaliações.
+          </p>
+          <a href="#" class="text-xs text-ink underline underline-offset-4 hover:opacity-70 transition">
+            Ver todas no Google
+          </a>
+        </div>
+
+        <div class="lg:col-span-8 flex flex-col justify-between min-h-[260px]">
+          <div id="review-box" class="transition-all duration-300">
+            <blockquote id="review-text" class="font-serif text-2xl md:text-4xl leading-snug text-ink mb-8">
+              “SUBSTITUIR POR AVALIAÇÃO REAL. Exemplo do tamanho de uma avaliação no Google, para testar o carrossel.”
+            </blockquote>
+            <p class="text-xs">
+              <span id="review-author" class="font-medium text-ink">[Nome do paciente]</span>
+              <span class="text-muted mx-2">Google · [Mês Ano]</span>
+            </p>
+          </div>
+
+          <div class="border-t border-rule pt-6 mt-12 flex items-center justify-between">
+            <div class="font-serif text-sm text-muted">
+              <span id="review-counter" class="text-ink">01</span> / 04
+            </div>
+            <div class="flex items-center gap-3">
+              <button id="review-prev" aria-label="Anterior" class="w-10 h-10 rounded-full border border-rule flex items-center justify-center text-ink hover:bg-ink hover:text-paper hover:border-ink transition">
+                ←
+              </button>
+              <button id="review-next" aria-label="Seguinte" class="w-10 h-10 rounded-full border border-rule flex items-center justify-center text-ink hover:bg-ink hover:text-paper hover:border-ink transition">
+                →
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       10. MARCAÇÃO (TEMA INK #14161A + WHATSAPP + MAPA)
+       ===================================================== -->
+  <section id="marcacao" class="py-28 md:py-44 bg-ink text-paper">
+    <div class="container-page">
+      <p class="eyebrow text-mutedInk mb-4">MARCAÇÃO</p>
+      <h2 class="section-heading text-paper mb-16 md:mb-24">
+        Reserve o seu <em class="text-paper/80">tempo</em><br />connosco.
+      </h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+        
+        <form id="booking-form" class="lg:col-span-7 space-y-10">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <div>
+              <label class="eyebrow text-mutedInk block mb-3">NOME</label>
+              <input type="text" id="input-nome" placeholder="O seu nome" required
+                     class="w-full bg-transparent border-b border-ruleDark pb-3 text-sm text-paper placeholder:text-mutedInk/50 focus:outline-none focus:border-paper transition" />
+            </div>
+            <div>
+              <label class="eyebrow text-mutedInk block mb-3">TELEFONE</label>
+              <input type="tel" id="input-telefone" placeholder="9xx xxx xxx" required
+                     class="w-full bg-transparent border-b border-ruleDark pb-3 text-sm text-paper placeholder:text-mutedInk/50 focus:outline-none focus:border-paper transition" />
+            </div>
+          </div>
+
+          <div>
+            <label class="eyebrow text-mutedInk block mb-3">TRATAMENTO</label>
+            <select id="input-tratamento" class="select-dark w-full bg-transparent border-b border-ruleDark pb-3 text-sm text-paper focus:outline-none focus:border-paper transition cursor-pointer">
+              <option value="Implantologia" class="bg-ink text-paper">Implantologia</option>
+              <option value="Ortodontia invisível" class="bg-ink text-paper">Ortodontia invisível</option>
+              <option value="Estética dentária" class="bg-ink text-paper">Estética dentária</option>
+              <option value="Branqueamento" class="bg-ink text-paper">Branqueamento</option>
+              <option value="Medicina dentária geral" class="bg-ink text-paper">Medicina dentária geral</option>
+              <option value="Odontopediatria" class="bg-ink text-paper">Odontopediatria</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <div>
+              <label class="eyebrow text-mutedInk block mb-3">PREFERÊNCIA DE DIA</label>
+              <select id="input-dia" class="select-dark w-full bg-transparent border-b border-ruleDark pb-3 text-sm text-paper focus:outline-none focus:border-paper transition cursor-pointer">
+                <option value="Qualquer dia" class="bg-ink text-paper">Qualquer dia</option>
+                <option value="Segunda a Sexta" class="bg-ink text-paper">Segunda a Sexta</option>
+                <option value="Sábado de manhã" class="bg-ink text-paper">Sábado de manhã</option>
+              </select>
+            </div>
+            <div>
+              <label class="eyebrow text-mutedInk block mb-3">PREFERÊNCIA DE HORA</label>
+              <select id="input-hora" class="select-dark w-full bg-transparent border-b border-ruleDark pb-3 text-sm text-paper focus:outline-none focus:border-paper transition cursor-pointer">
+                <option value="Qualquer hora" class="bg-ink text-paper">Qualquer hora</option>
+                <option value="Manhã" class="bg-ink text-paper">Manhã</option>
+                <option value="Tarde" class="bg-ink text-paper">Tarde</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-6">
+            <button type="submit" class="px-8 py-4 rounded-full bg-paper text-ink text-sm font-medium inline-flex items-center justify-center gap-2 hover:bg-white transition shrink-0">
+              Enviar pedido por WhatsApp <span>→</span>
+            </button>
+            <p class="text-xs text-mutedInk leading-relaxed max-w-xs">
+              A marcação só fica confirmada depois do nosso contacto.
+            </p>
+          </div>
+
+          <p class="text-[11px] text-mutedInk/70">
+            Abre o WhatsApp com a mensagem escrita. Nada fica guardado neste site. <a href="#" class="underline">Privacidade</a>
+          </p>
+        </form>
+
+        <div class="lg:col-span-5 space-y-8">
+          <div class="grid grid-cols-2 gap-4">
+            <a href="tel:+351000000000" class="py-3.5 px-5 rounded-full border border-ruleDark text-center text-xs text-paper hover:bg-white/5 transition flex items-center justify-center gap-2">
+              <span>📞</span> [Telefone]
+            </a>
+            <a href="https://wa.me/351000000000" target="_blank" rel="noopener" class="py-3.5 px-5 rounded-full bg-[#192B22] border border-[#2B4739] text-center text-xs text-[#AEE4C6] hover:bg-[#21382C] transition flex items-center justify-center gap-2">
+              <span>💬</span> WhatsApp
+            </a>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6 py-6 border-y border-ruleDark text-xs">
+            <div>
+              <p class="eyebrow text-mutedInk mb-2">HORÁRIO</p>
+              <p class="text-paper/90">[Horário]</p>
+            </div>
+            <div>
+              <p class="eyebrow text-mutedInk mb-2">MORADA</p>
+              <p class="text-paper/90">[Morada], Lisboa</p>
+            </div>
+          </div>
+
+          <div class="relative aspect-[16/10] w-full overflow-hidden bg-black">
+            <div id="map-card-preview" class="absolute inset-0">
+              <img 
+                src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1000&q=80" 
+                alt="[Morada] Lisboa" 
+                class="w-full h-full object-cover"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent"></div>
+              <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+                <div>
+                  <p class="font-serif text-2xl text-paper leading-tight mb-3">[Morada]<br />Lisboa</p>
+                  <button type="button" id="show-map-btn" class="px-4 py-2 rounded-full bg-paper text-ink text-xs font-medium hover:bg-white transition">
+                    Mostrar mapa
+                  </button>
+                </div>
+                <a href="https://maps.google.com" target="_blank" rel="noopener" class="text-xs text-paper/85 underline underline-offset-4 hover:text-white">
+                  Abrir no Google Maps
+                </a>
+              </div>
+            </div>
+
+            <div id="map-embed" class="hidden absolute inset-0">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3112.952242496215!2d-9.142685!3d38.722252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd19338210000001%3A0x0!2sLisboa!5e0!3m2!1spt-PT!2spt!4v1700000000000" 
+                class="w-full h-full border-0 grayscale contrast-125" 
+                allowfullscreen="" 
+                loading="lazy">
+              </iframe>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       11. PERGUNTAS FREQUENTES
+       ===================================================== -->
+  <section id="perguntas" class="py-28 md:py-44 bg-paper">
+    <div class="container-page">
+      <p class="eyebrow text-muted mb-4">PERGUNTAS FREQUENTES</p>
+      <h2 class="section-heading mb-14 md:mb-20">
+        Antes de <em>marcar.</em>
+      </h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12">
+        <div class="lg:col-start-5 lg:col-span-8 border-t border-rule">
+          
+          <div class="faq-row border-b border-rule py-6 cursor-pointer">
+            <div class="flex items-center justify-between gap-4">
+              <h3 class="font-serif text-2xl md:text-[1.65rem] text-ink font-normal">Têm acordos com seguros?</h3>
+              <span class="faq-btn w-8 h-8 rounded-full border border-rule flex items-center justify-center text-sm transition-all duration-300 shrink-0">+</span>
+            </div>
+            <div class="faq-content">
+              <div class="overflow-hidden">
+                <p class="text-[13.5px] text-muted leading-relaxed pt-4 max-w-xl">
+                  Trabalhamos com [lista de seguros e acordos]. Confirmamos consigo o que o seu plano cobre antes da consulta.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-row border-b border-rule py-6 cursor-pointer">
+            <div class="flex items-center justify-between gap-4">
+              <h3 class="font-serif text-2xl md:text-[1.65rem] text-ink font-normal">Atendem urgências?</h3>
+              <span class="faq-btn w-8 h-8 rounded-full border border-rule flex items-center justify-center text-sm transition-all duration-300 shrink-0">+</span>
+            </div>
+            <div class="faq-content">
+              <div class="overflow-hidden">
+                <p class="text-[13.5px] text-muted leading-relaxed pt-4 max-w-xl">
+                  Sim, reservamos períodos diários para urgências. Entre em contacto por telefone ou WhatsApp para lhe darmos resposta no próprio dia.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-row border-b border-rule py-6 cursor-pointer">
+            <div class="flex items-center justify-between gap-4">
+              <h3 class="font-serif text-2xl md:text-[1.65rem] text-ink font-normal">Posso pagar de forma faseada?</h3>
+              <span class="faq-btn w-8 h-8 rounded-full border border-rule flex items-center justify-center text-sm transition-all duration-300 shrink-0">+</span>
+            </div>
+            <div class="faq-content">
+              <div class="overflow-hidden">
+                <p class="text-[13.5px] text-muted leading-relaxed pt-4 max-w-xl">
+                  Sim. Apresentamos planos de pagamento faseado ajustados ao ritmo do seu tratamento, sem burocracia.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-row border-b border-rule py-6 cursor-pointer">
+            <div class="flex items-center justify-between gap-4">
+              <h3 class="font-serif text-2xl md:text-[1.65rem] text-ink font-normal">Como é a primeira consulta?</h3>
+              <span class="faq-btn w-8 h-8 rounded-full border border-rule flex items-center justify-center text-sm transition-all duration-300 shrink-0">+</span>
+            </div>
+            <div class="faq-content">
+              <div class="overflow-hidden">
+                <p class="text-[13.5px] text-muted leading-relaxed pt-4 max-w-xl">
+                  Começamos por conversar e ouvir o que o traz cá. Realizamos fotografia e radiografia digital e entregamos um plano de tratamento claro.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-row border-b border-rule py-6 cursor-pointer">
+            <div class="flex items-center justify-between gap-4">
+              <h3 class="font-serif text-2xl md:text-[1.65rem] text-ink font-normal">A partir de que idade trago o meu filho?</h3>
+              <span class="faq-btn w-8 h-8 rounded-full border border-rule flex items-center justify-center text-sm transition-all duration-300 shrink-0">+</span>
+            </div>
+            <div class="faq-content">
+              <div class="overflow-hidden">
+                <p class="text-[13.5px] text-muted leading-relaxed pt-4 max-w-xl">
+                  Recomendamos a primeira visita a partir do nascimento dos primeiros dentes ou por volta do primeiro ano de idade.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-row border-b border-rule py-6 cursor-pointer">
+            <div class="flex items-center justify-between gap-4">
+              <h3 class="font-serif text-2xl md:text-[1.65rem] text-ink font-normal">Há estacionamento perto?</h3>
+              <span class="faq-btn w-8 h-8 rounded-full border border-rule flex items-center justify-center text-sm transition-all duration-300 shrink-0">+</span>
+            </div>
+            <div class="faq-content">
+              <div class="overflow-hidden">
+                <p class="text-[13.5px] text-muted leading-relaxed pt-4 max-w-xl">
+                  Sim, existe estacionamento público à porta e parque coberto a menos de 2 minutos a pé da clínica.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       12. FOOTER + BARRA LEGAL PORTUGAL
+       ===================================================== -->
+  <footer class="pt-20 pb-12 bg-stone/60 border-t border-rule">
+    <div class="container-page">
+      
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 pb-20">
+        <div class="md:col-span-6">
+          <h2 class="section-heading mb-8">
+            Até <em>breve.</em>
+          </h2>
+          <a href="#marcacao" class="inline-block px-7 py-3.5 rounded-full bg-ink text-paper text-xs font-medium hover:opacity-90 transition">
+            Marcar consulta
+          </a>
+        </div>
+
+        <div class="md:col-span-3 text-xs space-y-2">
+          <p class="eyebrow text-muted mb-3">VISITE-NOS</p>
+          <p class="text-ink">[Morada]</p>
+          <p class="text-ink">Lisboa</p>
+          <p class="text-muted pt-2">[Horário]</p>
+        </div>
+
+        <div class="md:col-span-3 text-xs space-y-8">
+          <div class="space-y-2">
+            <p class="eyebrow text-muted mb-3">CONTACTOS</p>
+            <p class="text-ink">[Telefone]</p>
+            <p class="text-ink">WhatsApp [Número]</p>
+          </div>
+          <div class="space-y-2">
+            <p class="eyebrow text-muted mb-3">NAVEGAÇÃO</p>
+            <ul class="space-y-1.5 text-ink">
+              <li><a href="#tratamentos" class="hover:opacity-60 transition">Tratamentos</a></li>
+              <li><a href="#primeira-consulta" class="hover:opacity-60 transition">Primeira consulta</a></li>
+              <li><a href="#equipa" class="hover:opacity-60 transition">Equipa</a></li>
+              <li><a href="#clinica" class="hover:opacity-60 transition">A clínica</a></li>
+              <li><a href="#perguntas" class="hover:opacity-60 transition">Perguntas</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-rule pt-6 text-[11px] text-muted space-y-3">
+        <p>
+          Entidade: [Denominação] · NIF [NIF] · Registo ERS n.º [N.º] · Licença de funcionamento n.º [N.º] · Diretor clínico: [Nome], OMD n.º [Cédula]
+        </p>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-4">
+            <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener" class="hover:text-ink transition">Livro de Reclamações Eletrónico</a>
+            <a href="#" class="hover:text-ink transition">Política de privacidade</a>
+          </div>
+          <p>© 2026 [Nome da Clínica]</p>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- =====================================================
+       MOTOR DE SECUENCIA DE FRAMES .WEBP + SCROLL ANIMATIONS
+       ===================================================== -->
+  <script>
+    // Si descargas la carpeta /frames a tu servidor local, cambia BASE_URL a ""
+    const BASE_URL = "https://dentaria.cloudflagency.com";
+    const TOTAL_FRAMES = 90; // Número de frames de la secuencia en /frames/desktop/
+    const loadedFrames = [];
+    let validMaxFrame = 1;
+
+    const heroSequenceImg = document.getElementById('hero-sequence-img');
+    const heroSourceMobile = document.getElementById('hero-source-mobile');
+
+    // Precarga progresiva de los fotogramas .webp originales
+    const isPortraitMobile = window.matchMedia("(max-width: 1023px) and (orientation: portrait)").matches;
+    const folder = isPortraitMobile ? "mobile" : "desktop";
+
+    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+      const num = String(i).padStart(4, '0');
+      const img = new Image();
+      const url = `${BASE_URL}/frames/${folder}/frame_${num}.webp`;
+      img.src = url;
+      img.onload = () => {
+        loadedFrames[i] = url;
+        if (i > validMaxFrame) validMaxFrame = i;
+      };
+    }
+
+    // 1. Preparar palabras del Manifesto
+    const manifestoEl = document.getElementById('manifesto-scrub');
+    const rawWords = manifestoEl.innerText.trim().split(/\s+/);
+    manifestoEl.innerHTML = rawWords
+      .map(w => `<span class="m-word transition-colors duration-150" style="opacity:0.22">${w} </span>`)
+      .join('');
+    const manifestoSpans = document.querySelectorAll('.m-word');
+
+    // Referencias DOM
+    const header = document.getElementById('site-header');
+    const headerCta = document.getElementById('header-cta');
+    const heroSection = document.getElementById('top');
+    const beat1 = document.getElementById('hero-beat-1');
+    const beat2 = document.getElementById('hero-beat-2');
+    const beat3 = document.getElementById('hero-beat-3');
+    const heroStepNum = document.getElementById('hero-step-num');
+    const heroScrollLabel = document.getElementById('hero-scroll-label');
+
+    const consultaSection = document.getElementById('primeira-consulta');
+    const consultaLine = document.getElementById('consulta-progress-line');
+    const stepDot2 = document.getElementById('step-dot-2');
+    const stepDot3 = document.getElementById('step-dot-3');
+
+    const clinicaSection = document.getElementById('clinica');
+    const clinicaTrack = document.getElementById('clinica-horizontal-track');
+    const clinicaInnerImgs = document.querySelectorAll('.clinica-inner-img');
+
+    const marcacaoSection = document.getElementById('marcacao');
+    const parallaxImgs = document.querySelectorAll('[data-parallax]');
+
+    const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+
+    function onScrollUpdate() {
+      const vh = window.innerHeight;
+
+      // A. HERO SCROLLYTELLING + FRAME SCRUBBING
+      const heroRect = heroSection.getBoundingClientRect();
+      const heroTotal = heroSection.offsetHeight - vh;
+      const heroP = clamp(-heroRect.top / heroTotal, 0, 1);
+
+      // Si los frames .webp están cargados, actualiza el fotograma exacto; además aplica zoom suave de respaldo
+      if (validMaxFrame > 1) {
+        const frameIdx = clamp(Math.floor(1 + heroP * (validMaxFrame - 1)), 1, validMaxFrame);
+        if (loadedFrames[frameIdx]) {
+          heroSequenceImg.src = loadedFrames[frameIdx];
+          if (heroSourceMobile) heroSourceMobile.srcset = loadedFrames[frameIdx];
+        }
+      } else {
+        const camScale = 1 + heroP * 0.34;
+        const camX = -heroP * 4.5;
+        const camY = heroP * 2.5;
+        heroSequenceImg.style.transform = `scale3d(${camScale}, ${camScale}, 1) translate3d(${camX}%, ${camY}%, 0)`;
+      }
+
+      if (heroP < 0.33) {
+        const localP = heroP / 0.33;
+        heroStepNum.textContent = '01';
+        heroScrollLabel.style.opacity = String(clamp(1 - localP * 1.8, 0, 1));
+
+        beat1.style.opacity = String(clamp(1 - Math.max(0, localP - 0.65) * 3, 0, 1));
+        beat1.style.transform = `translate3d(0, ${-localP * 28}px, 0)`;
+        beat1.style.pointerEvents = 'auto';
+
+        beat2.style.opacity = '0';
+        beat2.style.pointerEvents = 'none';
+        beat3.style.opacity = '0';
+        beat3.style.pointerEvents = 'none';
+      } else if (heroP < 0.68) {
+        const localP = (heroP - 0.33) / 0.35;
+        heroStepNum.textContent = '02';
+        heroScrollLabel.style.opacity = '0';
+
+        beat1.style.opacity = '0';
+        beat1.style.pointerEvents = 'none';
+
+        const fadeIn = clamp(localP * 3.2, 0, 1);
+        const fadeOut = clamp(1 - Math.max(0, localP - 0.68) * 3.2, 0, 1);
+        beat2.style.opacity = String(Math.min(fadeIn, fadeOut));
+        beat2.style.transform = `translate3d(0, ${(1 - fadeIn) * 26 - (1 - fadeOut) * 26}px, 0)`;
+        beat2.style.pointerEvents = 'auto';
+
+        beat3.style.opacity = '0';
+        beat3.style.pointerEvents = 'none';
+      } else {
+        const localP = (heroP - 0.68) / 0.32;
+        heroStepNum.textContent = '03';
+        heroScrollLabel.style.opacity = '0';
+
+        beat1.style.opacity = '0';
+        beat2.style.opacity = '0';
+        beat2.style.pointerEvents = 'none';
+
+        const fadeIn = clamp(localP * 3, 0, 1);
+        beat3.style.opacity = String(fadeIn);
+        beat3.style.transform = `translate3d(0, ${(1 - fadeIn) * 26}px, 0)`;
+        beat3.style.pointerEvents = 'auto';
+      }
+
+      // B. NAVBAR ADAPTATIVA
+      const marcacaoRect = marcacaoSection.getBoundingClientRect();
+      const inHero = heroRect.bottom > 72;
+      const inMarcacao = marcacaoRect.top <= 72 && marcacaoRect.bottom >= 72;
+
+      if (inHero) {
+        header.className = 'fixed inset-x-0 top-0 z-50 transition-all duration-500 py-5 text-paper bg-transparent';
+        headerCta.className = 'px-6 py-2.5 rounded-full text-[12.5px] font-medium bg-paper text-ink hover:scale-105 transition-all duration-300';
+      } else if (inMarcacao) {
+        header.className = 'fixed inset-x-0 top-0 z-50 transition-all duration-500 py-4 text-paper bg-ink/85 backdrop-blur-md border-b border-paper/10';
+        headerCta.className = 'px-6 py-2.5 rounded-full text-[12.5px] font-medium bg-paper text-ink hover:scale-105 transition-all duration-300';
+      } else {
+        header.className = 'fixed inset-x-0 top-0 z-50 transition-all duration-500 py-4 text-ink bg-paper/85 backdrop-blur-md border-b border-ink/10';
+        headerCta.className = 'px-6 py-2.5 rounded-full text-[12.5px] font-medium bg-ink text-paper hover:scale-105 transition-all duration-300';
+      }
+
+      // C. MANIFESTO PALABRA POR PALABRA
+      const mRect = manifestoEl.getBoundingClientRect();
+      const mStart = vh * 0.84;
+      const mEnd = vh * 0.24;
+      const mProg = clamp((mStart - mRect.top) / (mStart - mEnd), 0, 1);
+      const litWords = mProg * manifestoSpans.length;
+
+      manifestoSpans.forEach((span, idx) => {
+        const wordProg = clamp(litWords - idx, 0, 1);
+        span.style.opacity = String(0.22 + wordProg * 0.78);
+      });
+
+      // D. LÍNEA HORIZONTAL EN "A PRIMEIRA CONSULTA"
+      const cRect = consultaSection.getBoundingClientRect();
+      const cProg = clamp((vh * 0.75 - cRect.top) / (cRect.height * 0.75), 0, 1);
+      consultaLine.style.width = `${12 + cProg * 88}%`;
+
+      if (cProg > 0.36) {
+        stepDot2.classList.add('bg-ink', 'border-ink');
+        stepDot2.classList.remove('bg-stone', 'border-ink/40');
+      } else {
+        stepDot2.classList.remove('bg-ink', 'border-ink');
+        stepDot2.classList.add('bg-stone', 'border-ink/40');
+      }
+
+      if (cProg > 0.72) {
+        stepDot3.classList.add('bg-ink', 'border-ink');
+        stepDot3.classList.remove('bg-stone', 'border-ink/40');
+      } else {
+        stepDot3.classList.remove('bg-ink', 'border-ink');
+        stepDot3.classList.add('bg-stone', 'border-ink/40');
+      }
+
+      // E. A CLÍNICA: STICKY HORIZONTAL SCROLL + VENTANA PARALLAX INTERNA
+      const clRect = clinicaSection.getBoundingClientRect();
+      const clScrollable = clinicaSection.offsetHeight - vh;
+      const clProg = clamp(-clRect.top / clScrollable, 0, 1);
+
+      const maxTranslateX = Math.max(0, clinicaTrack.scrollWidth - window.innerWidth);
+      const currentX = -clProg * maxTranslateX;
+      clinicaTrack.style.transform = `translate3d(${currentX}px, 0, 0)`;
+
+      clinicaInnerImgs.forEach((img) => {
+        const shiftPercent = clProg * 22;
+        img.style.transform = `translate3d(${shiftPercent}%, 0, 0)`;
+      });
+
+      // F. PARALLAX VERTICAL EN FOTOS GRANDES Y EQUIPO
+      parallaxImgs.forEach((img) => {
+        const parent = img.parentElement;
+        const rect = parent.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < vh) {
+          const speed = parseFloat(img.getAttribute('data-parallax') || '0.18');
+          const relY = (vh * 0.5 - (rect.top + rect.height * 0.5)) * speed;
+          img.style.transform = `translate3d(0, ${relY}px, 0)`;
+        }
+      });
+    }
+
+    window.addEventListener('scroll', () => requestAnimationFrame(onScrollUpdate), { passive: true });
+    window.addEventListener('resize', () => requestAnimationFrame(onScrollUpdate));
+    onScrollUpdate();
+
+    // Interacción en Tratamentos
+    const treatmentItems = document.querySelectorAll('.treatment-item');
+    const treatmentImg = document.getElementById('treatment-img');
+    const treatmentCaption = document.getElementById('treatment-caption');
+    const selectTratamento = document.getElementById('input-tratamento');
+
+    treatmentItems.forEach((item) => {
+      item.addEventListener('mouseenter', () => {
+        treatmentItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        const newSrc = item.getAttribute('data-img');
+        const newCap = item.getAttribute('data-caption');
+
+        if (treatmentImg.src !== newSrc) {
+          treatmentImg.style.opacity = '0.3';
+          treatmentImg.style.transform = 'scale(1.06)';
+          setTimeout(() => {
+            treatmentImg.src = newSrc;
+            treatmentCaption.textContent = newCap;
+            treatmentImg.style.opacity = '1';
+            treatmentImg.style.transform = 'scale(1)';
+          }, 150);
+        }
+      });
+
+      item.addEventListener('click', () => {
+        const chosen = item.getAttribute('data-treatment');
+        if (chosen && selectTratamento) selectTratamento.value = chosen;
+        document.getElementById('marcacao').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Carrusel de Avaliações (01/04 a 04/04)
+    const reviewsData = [
+      {
+        text: '“SUBSTITUIR POR AVALIAÇÃO REAL. Exemplo do tamanho de uma avaliação no Google, para testar o carrossel.”',
+        author: '[Nome do paciente]'
+      },
+      {
+        text: '“SUBSTITUIR POR AVALIAÇÃO REAL. Segunda avaliação de exemplo, idealmente sobre a primeira consulta ou o atendimento.”',
+        author: '[Nome do paciente]'
+      },
+      {
+        text: '“SUBSTITUIR POR AVALIAÇÃO REAL. Copiar o texto tal como está publicado e o nome como aparece no Google.”',
+        author: '[Nome do paciente]'
+      },
+      {
+        text: '“SUBSTITUIR POR AVALIAÇÃO REAL. Quarta avaliação de exemplo.”',
+        author: '[Nome do paciente]'
+      }
+    ];
+
+    let revIdx = 0;
+    const reviewBox = document.getElementById('review-box');
+    const reviewText = document.getElementById('review-text');
+    const reviewAuthor = document.getElementById('review-author');
+    const reviewCounter = document.getElementById('review-counter');
+
+    function renderReview(idx) {
+      reviewBox.style.opacity = '0';
+      reviewBox.style.transform = 'translateY(8px)';
+      setTimeout(() => {
+        reviewText.textContent = reviewsData[idx].text;
+        reviewAuthor.textContent = reviewsData[idx].author;
+        reviewCounter.textContent = `0${idx + 1}`;
+        reviewBox.style.opacity = '1';
+        reviewBox.style.transform = 'translateY(0)';
+      }, 180);
+    }
+
+    document.getElementById('review-next').addEventListener('click', () => {
+      revIdx = (revIdx + 1) % reviewsData.length;
+      renderReview(revIdx);
+    });
+
+    document.getElementById('review-prev').addEventListener('click', () => {
+      revIdx = (revIdx - 1 + reviewsData.length) % reviewsData.length;
+      renderReview(revIdx);
+    });
+
+    // Mostrar Mapa en Marcação
+    document.getElementById('show-map-btn').addEventListener('click', () => {
+      document.getElementById('map-card-preview').classList.add('hidden');
+      document.getElementById('map-embed').classList.remove('hidden');
+    });
+
+    // Acordeón de Perguntas Frequentes
+    const faqRows = document.querySelectorAll('.faq-row');
+    faqRows.forEach((row) => {
+      row.addEventListener('click', () => {
+        const isOpen = row.classList.contains('open');
+        faqRows.forEach(r => r.classList.remove('open'));
+        if (!isOpen) row.classList.add('open');
+      });
+    });
+
+    // Envío del Formulario por WhatsApp
+    document.getElementById('booking-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nome = document.getElementById('input-nome').value;
+      const tel = document.getElementById('input-telefone').value;
+      const trat = document.getElementById('input-tratamento').value;
+      const dia = document.getElementById('input-dia').value;
+      const hora = document.getElementById('input-hora').value;
+
+      const text = `Olá! Gostaria de marcar uma consulta.\n\n*Nome:* ${nome}\n*Telefone:* ${tel}\n*Tratamento:* ${trat}\n*Preferência de dia:* ${dia}\n*Preferência de hora:* ${hora}`;
+      window.open(`https://wa.me/351000000000?text=${encodeURIComponent(text)}`, '_blank');
+    });
+  </script>
+</body>
+</html>

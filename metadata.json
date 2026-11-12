@@ -1,0 +1,6 @@
+{
+  "name": "Clínica Santa Maria dos Olivais | Medicina Dentária, Implantes e Ortodontia em Lisboa",
+  "description": "Clínica de Medicina Dentária em Olivais e Moscavide, Lisboa. Especialistas em Implantologia, Invisalign, Ortodontia e Estética Dentária com 10 anos de excelência médica.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

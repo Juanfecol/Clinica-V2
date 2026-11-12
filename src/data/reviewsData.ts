@@ -1,0 +1,913 @@
+export interface GoogleReview {
+  id: number;
+  name: string;
+  rating: number;
+  ratingLabel: string;
+  starsDisplay: string;
+  review: string;
+  hasText?: boolean;
+  isComplete?: boolean;
+}
+
+export const GOOGLE_REVIEWS: GoogleReview[] = [
+  {
+    "id": 1,
+    "name": "Kelvin Carter",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "O ambiente é confortável, o atendimento é atencioso, a equipa é profissional e a experiência em geral foi muito boa. A relação qualidade-preço é boa; recomendo a quem precise de cuidados dentários que venha aqui.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 2,
+    "name": "Profa. Jaqueline Bueno",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Muito satisfeita com o atendimento e com o tratamento realizado. Fiz implantes e o resultado foi excelente. Recomendo pela qualidade, profissionalismo e cuidado com o paciente.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 3,
+    "name": "Thiago Saldanha",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Sempre que preciso fico muito satisfeito com o atendimento, serviço e o preço! É muito perceptível a dedicação, qualidade e a preocupação de toda equipa em realizar um serviço de excelência!",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 4,
+    "name": "Bianka Lorenn",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Fiz um implante nessa clínica fui super bem atendida pela Dra Ana Mata, assistente Karina, recepção e adorei o trabalho e o atendimento excelente. Boas recomendações. Indico de olhos fechados.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 5,
+    "name": "Claudiana Rola Pereira",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Sou seguida na Clínica Santa Maria dos Olivais algum tempo e gosto muito do atendimento. Em especial a Dra Mariana e as assistentes Karina e Andiara que são profissionais muito carinhosas e atenciosas!",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 6,
+    "name": "Kamila Carrullo",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Gostaria de parabenizar a clínica pelo atendimento maravilhoso. Tive uma experiência espetacular e agora que encontrei a clínica não saio mais de lá. Obrigada por todo carinho.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 7,
+    "name": "Vanessa Sergio",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Atendimento de excelência! Todos os médicos são de um extremo cuidado e atenção com os pacientes. Simpática e dedicação, recomendo vivamente!",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 8,
+    "name": "Lipa S",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Ótimas profissionais, serviço de excelência e os preços praticados na clínica são moderados e simpáticos. Para mim uma das melhores clínicas em Lisboa.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 9,
+    "name": "Eduardo",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Adorei o atendimento desde a recepção ao momento quando me sentei na cadeira preço muito bom e qualidade incrível obrigado a toda a equipe são excecionais e obrigado pelo miminho no fim adorei.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 10,
+    "name": "Juliana Rocha",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Bons preços, profissionais qualificados, realmente serviços de excelência. Fiz limpeza dentária e fiquei extremamente satisfeita.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 11,
+    "name": "Claudio Alexandre",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Muito muito bom. Super profissionais e acolhedoras. Meti 4 implantes de uma vez, já fez mais de um ano, e correu tudo super bem 🤤",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 12,
+    "name": "Carla Luz",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Já venho a esta clínica alguns anos, tudo muito bom desde as recepcionistas aos médicos, sempre prontos a resolver o problema. Estou satisfeita.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 13,
+    "name": "Weina Mneiro",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Adorei ter estado na clínica a doutora Ana é super simpática e é óbvio que vou voltar aconselho a toda a gente a fazer uma consulta com a doutora Ana.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 14,
+    "name": "Max Miller",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Great service by Dr. Ana. Very professional and excellent English. Can recommend for expats.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 15,
+    "name": "Luís Lopes",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Excelente equipa! Excelente atendimento! Desloco-me de Massamá para ser seguido por estes excelentes profissionais.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 16,
+    "name": "Carla Rodrigues",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "5* esta clinica! Sou super bem atendida por todos, fazem um trabalho muito bom! Staff muito atencioso... só tenho a agradecer 🥰",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 17,
+    "name": "Valdirene Paiva",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Excelente serviço, atendimento, acolhimento e higiene. Recomendo os serviços da clínica.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 18,
+    "name": "Mila Lageira",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Muito obrigada a toda a equipa, atendimento diferenciado só tenho a dizer Obrigada pelo profissionalismo. Recomendo 👏⭐️⭐️⭐️⭐️⭐️",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 19,
+    "name": "Bruno Gomes",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Super bem atendido, gente impecável muita simpatia ao redor... profissionalismo acima de tudo.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 20,
+    "name": "Helder Batista",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Excelente serviço, atendimento, simpatia e acima de tudo ótimos profissionais.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 21,
+    "name": "Nélia Teixeira",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Ótima equipe, com excelentes profissionais e preços bastante em conta. Recomendo.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 22,
+    "name": "Ricardo Prata",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Muito profissionalismo, excelente atendimento e simpatia! Recomendo vivamente.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 23,
+    "name": "Giselle Goncalves",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "A clínica e os médicos foram muito bem, os preços são justos e a clínica impecável.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 24,
+    "name": "Goncalo Candeias",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Atendimento fantástico, staff muito simpático e profissional. Recomendo.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 25,
+    "name": "Júlio Gil",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Excelente atendimento e simpatia de todos os funcionários. Recomendo muito!!",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 26,
+    "name": "Shailesh Jaga",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Atendimento muito profissional de toda a equipa. Muito satisfeito com os resultados.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 27,
+    "name": "Marcia Angelo",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Ótimo atendimento!! Profissionais eficientes, e um preço acessível!!",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 28,
+    "name": "Isabel Joglar",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "O melhor serviço e atendimento. Competência e simpatia aos melhores preços.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 29,
+    "name": "Pedro Santos",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Profissionalismo, trabalham mediante as nossas necessidades, recomendo.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 30,
+    "name": "Alfredo Cardoso",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Agradeço á Dra Orisanda toda a sua simpatia e profissionalismo e á sua assistente obg.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 31,
+    "name": "Sergio Canteiro",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Grande atendimento tanto médico como do staff muito obrigado por tudo.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 32,
+    "name": "Keith B Angola",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Um atendimento excelente desde 2020 que uso os serviços desta clínica.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 33,
+    "name": "Alexandre Heng",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Só vou neles seja para que tipo de situação odontológica for.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 34,
+    "name": "Professor Carvalheira Gil",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Amei o atendimento e os funcionários. Super-recomendo.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 35,
+    "name": "Eduardo Filho",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Procedimento bem feito e duradouro, super indico!",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 36,
+    "name": "Fernando Andrés",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Súper recomendable! Súper queridos todos!",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 37,
+    "name": "Fernando Rodrigues",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Excelentes dentistas, muito boa clínica.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 38,
+    "name": "Geisi Miranda",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Um atendimento ótimo, com excelentes profissionais.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 39,
+    "name": "Maria da Conceiçao Morais",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Boa qualidade de serviços e simpatia.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 40,
+    "name": "Eduardo Ferreira",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Óptimo atendimento, bons preços.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 41,
+    "name": "Fernando Barbosa",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "É uma clínica dentária muito boa.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 42,
+    "name": "Rui Ribeiro",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Sou de Mirandela, a cerca de 500 km de casa (6 horas de autocarro), e terminei hoje o tratamento (2 implantes) com vocês...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 43,
+    "name": "Jonathan Diaz",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Fui às urgências para extrair um dente do siso, pois a dor era insuportável. Desde a chegada, a Carla foi muito cordial...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 44,
+    "name": "Maria Canico",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Quero deixar um enorme agradecimento a toda a equipa da clínica dentária Santa Maria dos Olivais pelo excelente trabalho...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 45,
+    "name": "Alexandra Costa",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Excelente clínica! Fui atendida pelo Dr. Júlio, que foi muito atencioso, cuidadoso e explicou tudo de forma clara e...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 46,
+    "name": "Clínica Terapia Go",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Eu, Dra Laurianne utilizo este perfil institucional, pois recomendo muitos pacientes diariamente aos meus colegas Dr da...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 47,
+    "name": "Leonor Matos",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Primeiro noutro espaço e agora na Clínica de Santa Maria dos Olivais, há mais de 12 anos que entrego à competente e...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 48,
+    "name": "Edgar Valles",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Muitíssimo satisfeito com a Clínica Dentária SMO. Fiz recentemente vários tratamentos, dos quais destaco, extração e...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 49,
+    "name": "Sheila Pires",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "É com enorme satisfação que deixo a minha avaliação à Clínica Dentária Santa Maria dos Olivais. Desde o primeiro...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 50,
+    "name": "Elis Nery",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Há vários anos que sou acompanhada por esta clínica e não podia estar mais satisfeita. Toda a equipa é de uma simpatia...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 51,
+    "name": "Jonathan Diaz",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Fui à Clínica Santa Maria fazer um branqueamento e o resultado ficou brutal. Nota-se logo a diferença e o sorriso ficou...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 52,
+    "name": "Lorens Gonzalez",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Fiz recentemente um implante dentário nesta clínica e fiquei muito satisfeito com toda a experiência. Desde a primeira...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 53,
+    "name": "Lorens González Blanco",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Uma experiência excelente do início ao fim. A equipa é extremamente profissional, atenciosa e próxima em todos os...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 54,
+    "name": "Neuza Monteiro",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Já sou seguida aqui há vários anos! Todas umas excelentes médicas e assistentes...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 55,
+    "name": "Venusa Claro",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Fiquei extremamente satisfeita com o atendimento na clínica! Desde a receção até ao momento do tratamento, senti-me...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 56,
+    "name": "Manuel Carvalheira Gil",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Onde a Arte Encontra a Ciência – Uma Experiência na Clínica Santa Maria dos Olivais...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 57,
+    "name": "Vanesa Honrado",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "What a great clinic! I have been a customer for the last 3 years! And I am extremely happy with the services 😉...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 58,
+    "name": "Lisandra Gonçalves",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Atendimento personalizado e com o maior profissionalismo que alguma vez encontrei...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 59,
+    "name": "Paula Fialho",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Olá 🙂 Há 3 meses e pouco, iniciei um processo...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 60,
+    "name": "Catia Conceicao",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Hoje terminei o meu tratamento coloquei implantes no maxilar superior e inferior, não poderia estar mais feliz quero...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 61,
+    "name": "Tiago Pinho Jesus",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "O mais importante de ter um dentista é a confiança entre paciente e o seu médico, e eu só tenho a dizer que confio a...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 62,
+    "name": "Patricia Nunes",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Das melhores clínicas onde já fui atendida. Todo o staff é extremamente atencioso e...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 63,
+    "name": "Rui Pinto",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Tive a sorte e o privilégio de poder trabalhar com a incrível equipa da Dra Ana Mata...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 64,
+    "name": "Manuela Mendes",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Clínica com excelentes profissionais. É importante referir a competência em...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 65,
+    "name": "Carlos Pereira",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Hoje tive a melhor experiência da minha vida dentro de uma clínica de odontologia, tudo graças á Dra Ana Duarte que me...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 66,
+    "name": "Rui Pedro Rodrigues",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Das melhores clínicas que já fui! O profissionalismo de todos foi do...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 67,
+    "name": "Carla Claro",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Só tenho elogios, efetuei 6 implantes e 2 facetas. Inclusive uma das facetas foi num dente...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 68,
+    "name": "Rodrigo Cícero De Souza",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Estava muito inseguro quanto a tirar o siso, já havia feito algumas avaliações em várias clínicas e por fim encontrei a...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 69,
+    "name": "Lúcia Cunha",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Sem dúvida a melhor clínica! Simpática e atenção no atendimento, excelentes profissionais, o melhor preço nos...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 70,
+    "name": "Rui Doutor",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Coloquei 4 implantes e uma coroa, gostei bastante do resultado. Equipa competente e atenciosa, flexibilidade no...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 71,
+    "name": "Suzane Oliveira",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Atendimento impecável, uma equipe atenciosa e dedicada, com zelo e agilidade para que seja perfeitamente bem atendida e...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 72,
+    "name": "Gabriel",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Já lá vou desde 2018 e não tenho nada a apontar. Costumo pedir marcações através do...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 73,
+    "name": "Laysa Sthefanny",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Ótimo serviço, voltarei sempre 🤩🤩🤩🤩",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 74,
+    "name": "António Gil",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Excelente serviço, parabéns.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 75,
+    "name": "Solangie Lorena Chia Cruz",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Os melhores profissionais.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 76,
+    "name": "Cristian Justiniano",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "A melhor clínica.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 77,
+    "name": "Moises França",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Excelente de mais.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 78,
+    "name": "Wagner Francisco Anjos",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Super indico.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 79,
+    "name": "Isabel Melo",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Bons profissionais!",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 80,
+    "name": "Nuno Silva",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Bom atendimento.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 81,
+    "name": "Marta Pacheco",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Muito simpáticos/as.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 82,
+    "name": "Graça Magalhães",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Muito atenciosas.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 83,
+    "name": "Patricia Palacios",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Tudo de bom...",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 84,
+    "name": "Alexandre Bica",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "5 estrelas.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 85,
+    "name": "Pedro Rodrigues",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Competência.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 86,
+    "name": "Benvinda Ribeiro",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Gostei 👍",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 87,
+    "name": "Giselle Marie Nunes Goncalves",
+    "rating": 5,
+    "ratingLabel": "5/5",
+    "starsDisplay": "★★★★★",
+    "review": "Adoreiii",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 88,
+    "name": "Joao Guerreiro",
+    "rating": 4,
+    "ratingLabel": "4/5",
+    "starsDisplay": "★★★★",
+    "review": "Mudámos relativamente há pouco tempo mas até à data ficámos bastante satisfeitos.",
+    "hasText": true,
+    "isComplete": true
+  },
+  {
+    "id": 89,
+    "name": "Didia Gonçalves",
+    "rating": 4,
+    "ratingLabel": "4/5",
+    "starsDisplay": "★★★★",
+    "review": "Nota 4, para a clínica dos Olivais. Faz 4 anos que sou acompanhada por esta clínica...",
+    "hasText": true,
+    "isComplete": false
+  },
+  {
+    "id": 90,
+    "name": "Antonio Aguilar",
+    "rating": 4,
+    "ratingLabel": "4/5",
+    "starsDisplay": "★★★★",
+    "review": "Simpática.",
+    "hasText": true,
+    "isComplete": true
+  }
+];
