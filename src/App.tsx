@@ -477,35 +477,144 @@ export default function App() {
     return () => clearInterval(interval);
   }, [isReviewPaused]);
 
-  // Team carousel state
+  // Team carousel state & mobile foreground B&W-to-color tracking
+  const equipaSectionRef = useRef<HTMLElement>(null);
   const teamScrollRef = useRef<HTMLDivElement>(null);
+  const teamScrollRafRef = useRef<number | null>(null);
   const [canScrollTeamLeft, setCanScrollTeamLeft] = useState<boolean>(false);
   const [canScrollTeamRight, setCanScrollTeamRight] = useState<boolean>(true);
   const [teamScrollProgress, setTeamScrollProgress] = useState<number>(0);
+  const [activeTeamIdx, setActiveTeamIdx] = useState<number>(0);
+  const [isEquipaInView, setIsEquipaInView] = useState<boolean>(false);
+  const [shouldPreloadEquipa, setShouldPreloadEquipa] = useState<boolean>(false);
+
+  useEffect(() => {
+    const sectionEl = equipaSectionRef.current;
+    if (!sectionEl) return;
+
+    let revealTimer: number | null = null;
+
+    const preloadObs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldPreloadEquipa(true);
+          preloadObs.disconnect();
+        }
+      },
+      { rootMargin: '800px 0px' }
+    );
+
+    const viewObs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          revealTimer = window.setTimeout(() => {
+            setIsEquipaInView(true);
+          }, 120);
+        } else {
+          if (revealTimer) {
+            clearTimeout(revealTimer);
+            revealTimer = null;
+          }
+          setIsEquipaInView(false);
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    preloadObs.observe(sectionEl);
+    viewObs.observe(sectionEl);
+
+    return () => {
+      preloadObs.disconnect();
+      viewObs.disconnect();
+      if (revealTimer) clearTimeout(revealTimer);
+      if (teamScrollRafRef.current) cancelAnimationFrame(teamScrollRafRef.current);
+    };
+  }, []);
+
+  const updateTeamCarouselState = () => {
+    const container = teamScrollRef.current;
+    if (!container) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = container;
+    const maxScroll = Math.max(0, scrollWidth - clientWidth);
+
+    setCanScrollTeamLeft(scrollLeft > 10);
+    setCanScrollTeamRight(scrollLeft < maxScroll - 10);
+    if (maxScroll > 0) {
+      setTeamScrollProgress(Math.min(1, Math.max(0, scrollLeft / maxScroll)));
+    }
+
+    // Determine which doctor card is in the foreground (closest to viewport center)
+    if (scrollLeft <= 14) {
+      setActiveTeamIdx((prev) => (prev !== 0 ? 0 : prev));
+      return;
+    }
+    if (maxScroll > 0 && scrollLeft >= maxScroll - 14) {
+      const lastIdx = TEAM_MEMBERS.length - 1;
+      setActiveTeamIdx((prev) => (prev !== lastIdx ? lastIdx : prev));
+      return;
+    }
+
+    const viewportCenter = scrollLeft + clientWidth / 2;
+    const cards = container.querySelectorAll<HTMLElement>('[data-team-card-idx]');
+    let closestIdx = 0;
+    let minDistance = Infinity;
+
+    cards.forEach((card, idx) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const distance = Math.abs(cardCenter - viewportCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIdx = idx;
+      }
+    });
+
+    setActiveTeamIdx((prev) => (prev !== closestIdx ? closestIdx : prev));
+  };
 
   const checkTeamScroll = () => {
-    if (teamScrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = teamScrollRef.current;
-      setCanScrollTeamLeft(scrollLeft > 10);
-      setCanScrollTeamRight(scrollLeft < scrollWidth - clientWidth - 10);
-      const maxScroll = scrollWidth - clientWidth;
-      if (maxScroll > 0) {
-        setTeamScrollProgress(Math.min(1, Math.max(0, scrollLeft / maxScroll)));
-      }
+    if (teamScrollRafRef.current !== null) return;
+    teamScrollRafRef.current = requestAnimationFrame(() => {
+      updateTeamCarouselState();
+      teamScrollRafRef.current = null;
+    });
+  };
+
+  const scrollToTeamCard = (targetIdx: number) => {
+    const container = teamScrollRef.current;
+    if (!container) return;
+    const clampedIdx = clampValue(targetIdx, 0, TEAM_MEMBERS.length - 1);
+    const targetCard = container.querySelector<HTMLElement>(
+      `[data-team-card-idx="${clampedIdx}"]`
+    );
+    if (targetCard) {
+      const targetLeft =
+        clampedIdx === 0
+          ? 0
+          : targetCard.offsetLeft - (container.clientWidth - targetCard.offsetWidth) / 2;
+      container.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
+      setActiveTeamIdx(clampedIdx);
     }
   };
 
   const scrollTeamLeft = () => {
-    if (teamScrollRef.current) {
-      const cardWidth = teamScrollRef.current.clientWidth > 768 ? 340 : 280;
-      teamScrollRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+    const container = teamScrollRef.current;
+    if (!container) return;
+    if (window.innerWidth < 1024) {
+      scrollToTeamCard(activeTeamIdx - 1);
+    } else {
+      container.scrollBy({ left: -340, behavior: 'smooth' });
     }
   };
 
   const scrollTeamRight = () => {
-    if (teamScrollRef.current) {
-      const cardWidth = teamScrollRef.current.clientWidth > 768 ? 340 : 280;
-      teamScrollRef.current.scrollBy({ left: cardWidth, behavior: 'smooth' });
+    const container = teamScrollRef.current;
+    if (!container) return;
+    if (window.innerWidth < 1024) {
+      scrollToTeamCard(activeTeamIdx + 1);
+    } else {
+      container.scrollBy({ left: 340, behavior: 'smooth' });
     }
   };
 
@@ -1493,9 +1602,9 @@ export default function App() {
       </section>
 
       {/* =====================================================
-           6. A EQUIPA (CARROSSSEL 7 DOUTORES + COLOR ON HOVER)
+           6. A EQUIPA (CARROSSEL DOUTORES — COR EM PRIMEIRO PLANO MÓVEL & HOVER DESKTOP)
            ===================================================== */}
-      <section id="equipa" className="py-28 md:py-44 bg-paper overflow-hidden">
+      <section id="equipa" ref={equipaSectionRef} className="py-28 md:py-44 bg-paper overflow-hidden">
         <div className="container-page">
           <ModularReveal>
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 md:mb-16">
@@ -1541,53 +1650,90 @@ export default function App() {
             </div>
           </ModularReveal>
 
-          {/* Carrossel horizontal de todos os membros (doutores e coordenação) com efeito B&W para Cor no hover */}
+          {/* Carrossel horizontal: em móvel ganha cor ao passar para primeiro plano; em desktop no hover */}
           <ModularReveal delay={1}>
             <div
               ref={teamScrollRef}
               onScroll={checkTeamScroll}
-              className="flex gap-6 md:gap-7 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0"
+              className="flex gap-5 sm:gap-6 md:gap-7 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory pb-4 -mx-6 px-6 sm:mx-0 sm:px-0"
             >
-              {TEAM_MEMBERS.map((member, index) => (
-                <div
-                  key={member.id}
-                  className="group shrink-0 w-[78vw] sm:w-[320px] md:w-[310px] lg:w-[320px] snap-start"
-                >
-                  {/* Contenedor da fotografia: em preto e branco por defeito, ganha cor ao passar o rato */}
-                  <div className="aspect-[3/3.9] overflow-hidden bg-stone mb-3 relative rounded-2xl cursor-pointer shadow-sm">
-                    <div className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-105 will-change-transform">
-                      <img
-                        src={member.img}
-                        alt={member.name}
-                        loading={index < 2 ? 'eager' : 'lazy'}
-                        decoding="async"
-                        style={{
-                          objectPosition: member.imagePosition || '50% 0%',
-                          transform: member.scale ? `scale(${member.scale})` : undefined,
-                          transformOrigin: member.transformOrigin || '50% 15%',
-                        }}
-                        className="w-full h-full object-cover grayscale contrast-105 opacity-90 group-hover:grayscale-0 group-hover:contrast-100 group-hover:opacity-100 transition-all duration-700 ease-out"
-                      />
+              {TEAM_MEMBERS.map((member, index) => {
+                const isForegroundMobile = isEquipaInView && activeTeamIdx === index;
+                return (
+                  <div
+                    key={member.id}
+                    data-team-card-idx={index}
+                    onClick={() => {
+                      if (window.innerWidth < 1024 && activeTeamIdx !== index) {
+                        scrollToTeamCard(index);
+                      }
+                    }}
+                    className="group shrink-0 w-[78vw] max-w-[310px] sm:max-w-none sm:w-[320px] md:w-[310px] lg:w-[320px] snap-center lg:snap-start"
+                  >
+                    {/* Contenedor da fotografia: passa de P&B a Cor quando entra em primeiro plano em móvel ou ao passar o rato em desktop */}
+                    <div
+                      className={`aspect-[3/3.9] overflow-hidden bg-stone mb-3 relative rounded-2xl cursor-pointer transition-shadow duration-500 ${
+                        isForegroundMobile ? 'shadow-md lg:shadow-sm' : 'shadow-sm'
+                      }`}
+                    >
+                      <div
+                        className={`w-full h-full transition-transform duration-700 ease-out will-change-transform ${
+                          isForegroundMobile
+                            ? 'scale-[1.03] lg:scale-100 lg:group-hover:scale-105'
+                            : 'scale-100 lg:group-hover:scale-105'
+                        }`}
+                      >
+                        <img
+                          src={member.img}
+                          alt={member.name}
+                          loading={shouldPreloadEquipa || index < 2 ? 'eager' : 'lazy'}
+                          decoding="async"
+                          style={{
+                            objectPosition: member.imagePosition || '50% 0%',
+                            transform: member.scale ? `scale(${member.scale})` : undefined,
+                            transformOrigin: member.transformOrigin || '50% 15%',
+                          }}
+                          className={`w-full h-full object-cover transition-all duration-700 ease-out ${
+                            isForegroundMobile
+                              ? 'grayscale-0 contrast-100 opacity-100 lg:grayscale lg:contrast-105 lg:opacity-90 lg:group-hover:grayscale-0 lg:group-hover:contrast-100 lg:group-hover:opacity-100'
+                              : 'grayscale contrast-105 opacity-85 lg:opacity-90 lg:group-hover:grayscale-0 lg:group-hover:contrast-100 lg:group-hover:opacity-100'
+                          }`}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Tipografia refinada: letra mais pequena e somente o título */}
+                    <div className="flex flex-col pt-1">
+                      <h3
+                        className={`font-serif text-lg font-medium transition-colors duration-500 leading-snug ${
+                          isForegroundMobile
+                            ? 'text-ink'
+                            : 'text-ink/75 lg:text-ink lg:group-hover:text-ink/80'
+                        }`}
+                      >
+                        {member.name}
+                      </h3>
+                      {member.role && (
+                        <p className="text-xs text-muted font-normal mt-0.5 leading-snug">
+                          {member.role}
+                        </p>
+                      )}
                     </div>
                   </div>
-
-                  {/* Tipografia refinada: letra mais pequena e somente o título */}
-                  <div className="flex flex-col pt-1">
-                    <h3 className="font-serif text-lg text-ink font-medium group-hover:text-ink/80 transition-colors leading-snug">
-                      {member.name}
-                    </h3>
-                    {member.role && (
-                      <p className="text-xs text-muted font-normal mt-0.5 leading-snug">
-                        {member.role}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
+              {/* Espaçador final em móvel/tablet para permitir centrar o último membro em primeiro plano */}
+              <div className="w-[8vw] shrink-0 lg:hidden" aria-hidden="true" />
             </div>
 
-            {/* Barra de progresso sutil do carrossel */}
-            <div className="mt-8 flex items-center">
+            {/* Indicador e barra de progresso sutil do carrossel */}
+            <div className="mt-7 sm:mt-8 flex items-center gap-3.5">
+              <span className="lg:hidden font-serif text-xs text-ink font-semibold tabular-nums shrink-0">
+                {String(activeTeamIdx + 1).padStart(2, '0')}{' '}
+                <span className="text-muted font-normal">
+                  / {String(TEAM_MEMBERS.length).padStart(2, '0')}
+                </span>
+              </span>
               <div className="w-full max-w-[200px] h-[2px] bg-ink/10 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-ink transition-all duration-300 rounded-full"
