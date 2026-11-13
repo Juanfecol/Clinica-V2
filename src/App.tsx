@@ -322,37 +322,44 @@ const FAQS = [
 ];
 
 const MANIFESTO_TEXT = 'Por trás de cada sorriso existe uma história. Cuidamos de si com tempo, carinho e a tranquilidade de voltar a sorrir sem medos.';
+const MANIFESTO_WORDS = MANIFESTO_TEXT.split(/\s+/);
 
 export default function App() {
-  // Navigation header state
+  // Navigation header state (only updates on discrete theme boundary crossings)
   const [headerTheme, setHeaderTheme] = useState<'transparent' | 'dark' | 'light'>('transparent');
+  const headerThemeRef = useRef<'transparent' | 'dark' | 'light'>('transparent');
 
+  // Hero scrollytelling refs & discrete step indicator
   const [heroStep, setHeroStep] = useState<'01' | '02' | '03'>('01');
-  const [heroScrollLabelOpacity, setHeroScrollLabelOpacity] = useState<number>(1);
-  const [beat1Style, setBeat1Style] = useState<React.CSSProperties>({});
-  const [beat2Style, setBeat2Style] = useState<React.CSSProperties>({ opacity: 0, pointerEvents: 'none' });
-  const [beat3Style, setBeat3Style] = useState<React.CSSProperties>({ opacity: 0, pointerEvents: 'none' });
+  const heroStepRef = useRef<'01' | '02' | '03'>('01');
+  const heroScrollLabelRef = useRef<HTMLSpanElement>(null);
+  const beat1Ref = useRef<HTMLDivElement>(null);
+  const beat2Ref = useRef<HTMLDivElement>(null);
+  const beat3Ref = useRef<HTMLDivElement>(null);
 
-  // Manifesto word scrub state
-  const manifestoWords = MANIFESTO_TEXT.split(/\s+/);
-  const [manifestoWordOpacities, setManifestoWordOpacities] = useState<number[]>(
-    new Array(manifestoWords.length).fill(0.22)
-  );
+  // Manifesto word scrub direct DOM refs
+  const manifestoWordRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
-  // Consulta progress state
-  const [consultaLineWidth, setConsultaLineWidth] = useState<number>(15);
+  // Consulta progress direct DOM ref & discrete dot states
+  const consultaLineRef = useRef<HTMLDivElement>(null);
   const [step2Active, setStep2Active] = useState<boolean>(false);
+  const step2ActiveRef = useRef<boolean>(false);
   const [step3Active, setStep3Active] = useState<boolean>(false);
+  const step3ActiveRef = useRef<boolean>(false);
 
-  // Clinica horizontal track state (mobile + desktop sticky scroll)
+  // Banner 3D video proximity loading & playback control
+  const bannerSectionRef = useRef<HTMLElement>(null);
+  const bannerVideoRef = useRef<HTMLVideoElement>(null);
+  const [shouldLoadBannerVideo, setShouldLoadBannerVideo] = useState<boolean>(false);
+
+  // Clinica horizontal track direct DOM refs & discrete counter (01..09)
+  const clinicaSectionRef = useRef<HTMLElement>(null);
   const clinicaStickyRef = useRef<HTMLDivElement>(null);
   const clinicaTrackRef = useRef<HTMLDivElement>(null);
-  const [clinicaTrackTransform, setClinicaTrackTransform] = useState<string>('translate3d(0px, 0, 0)');
-  const [clinicaImageShift, setClinicaImageShift] = useState<number>(0);
-  const [clinicaProgress, setClinicaProgress] = useState<number>(0);
-
-  // Parallax transforms state map
-  const [parallaxTransforms, setParallaxTransforms] = useState<{ [key: string]: string }>({});
+  const clinicaProgressBarRef = useRef<HTMLDivElement>(null);
+  const [clinicaStepNum, setClinicaStepNum] = useState<number>(1);
+  const clinicaStepRef = useRef<number>(1);
+  const [shouldPreloadClinica, setShouldPreloadClinica] = useState<boolean>(false);
 
   // Treatment hover state (desktop) & Reel carousel state (mobile)
   const [activeTreatment, setActiveTreatment] = useState<TreatmentData>(TREATMENTS[0]);
@@ -535,155 +542,260 @@ export default function App() {
 
 
 
-  // Main scroll loop
+  // Proximity lazy-loading & viewport pause/resume for 3D Banner Video + #clinica gallery preload
   useEffect(() => {
-    let animationFrameId: number;
+    const bannerEl = bannerSectionRef.current;
+    const clinicaEl = clinicaSectionRef.current;
+
+    const preloadObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.target === bannerEl && entry.isIntersecting) {
+            setShouldLoadBannerVideo(true);
+            preloadObserver.unobserve(entry.target);
+          } else if (entry.target === clinicaEl && entry.isIntersecting) {
+            setShouldPreloadClinica(true);
+            preloadObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: '900px 0px' }
+    );
+
+    if (bannerEl) preloadObserver.observe(bannerEl);
+    if (clinicaEl) preloadObserver.observe(clinicaEl);
+
+    const playbackObserver = new IntersectionObserver(
+      ([entry]) => {
+        const video = bannerVideoRef.current;
+        if (!video) return;
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.05 }
+    );
+
+    if (bannerEl) playbackObserver.observe(bannerEl);
+
+    return () => {
+      preloadObserver.disconnect();
+      playbackObserver.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (shouldLoadBannerVideo && bannerVideoRef.current) {
+      bannerVideoRef.current.play().catch(() => {});
+    }
+  }, [shouldLoadBannerVideo]);
+
+  // Unified 60fps direct-DOM scroll loop (zero continuous React re-renders)
+  useEffect(() => {
+    let animationFrameId = 0;
+    let isTicking = false;
+
+    const heroEl = document.getElementById('top');
+    const marcacaoEl = document.getElementById('marcacao');
+    const manifestoEl = document.getElementById('manifesto-scrub');
+    const consultaEl = document.getElementById('primeira-consulta');
+    const clinicaEl = document.getElementById('clinica');
+
+    const parallaxNodes = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax-id]')).map(
+      (el) => ({
+        el,
+        parent: (el.parentElement as HTMLElement) || el,
+        speed: parseFloat(el.getAttribute('data-parallax') || '0.18'),
+      })
+    );
+
+    const setBeatState = (
+      el: HTMLDivElement | null,
+      opacity: number,
+      translateY: number,
+      interactive: boolean
+    ) => {
+      if (!el) return;
+      el.style.opacity = String(opacity);
+      el.style.transform = `translate3d(0, ${translateY}px, 0)`;
+      el.style.pointerEvents = interactive ? 'auto' : 'none';
+    };
 
     const onScrollUpdate = () => {
       const vh = window.innerHeight;
+      const isDesktop = window.innerWidth >= 768;
 
-      // A. HERO SCROLLYTELLING + ULTRA-SMOOTH FRAME SCRUBBING
-      const heroEl = document.getElementById('top');
-      const heroStickyEl = document.getElementById('hero-sticky');
-      if (heroEl && heroStickyEl) {
+      // A. HERO SCROLLYTELLING (DIRECT GPU MUTATION)
+      if (heroEl) {
         const heroRect = heroEl.getBoundingClientRect();
-        const heroTotal = heroEl.offsetHeight - vh;
-        const heroP = clampValue(-heroRect.top / heroTotal, 0, 1);
+        if (heroRect.bottom > -160) {
+          const heroTotal = Math.max(1, heroEl.offsetHeight - vh);
+          const heroP = clampValue(-heroRect.top / heroTotal, 0, 1);
 
+          let nextHeroStep: '01' | '02' | '03' = '01';
 
+          if (heroP < 0.33) {
+            const localP = heroP / 0.33;
+            nextHeroStep = '01';
+            if (heroScrollLabelRef.current) {
+              heroScrollLabelRef.current.style.opacity = String(clampValue(1 - localP * 1.8, 0, 1));
+            }
+            const beat1Opacity = clampValue(1 - Math.max(0, localP - 0.65) * 3, 0, 1);
+            setBeatState(beat1Ref.current, beat1Opacity, -localP * 28, true);
+            setBeatState(beat2Ref.current, 0, 26, false);
+            setBeatState(beat3Ref.current, 0, 26, false);
+          } else if (heroP < 0.68) {
+            const localP = (heroP - 0.33) / 0.35;
+            nextHeroStep = '02';
+            if (heroScrollLabelRef.current) {
+              heroScrollLabelRef.current.style.opacity = '0';
+            }
+            setBeatState(beat1Ref.current, 0, -28, false);
+            const fadeIn = clampValue(localP * 3.2, 0, 1);
+            const fadeOut = clampValue(1 - Math.max(0, localP - 0.68) * 3.2, 0, 1);
+            const beat2Opacity = Math.min(fadeIn, fadeOut);
+            setBeatState(
+              beat2Ref.current,
+              beat2Opacity,
+              (1 - fadeIn) * 26 - (1 - fadeOut) * 26,
+              true
+            );
+            setBeatState(beat3Ref.current, 0, 26, false);
+          } else {
+            const localP = (heroP - 0.68) / 0.32;
+            nextHeroStep = '03';
+            if (heroScrollLabelRef.current) {
+              heroScrollLabelRef.current.style.opacity = '0';
+            }
+            setBeatState(beat1Ref.current, 0, -28, false);
+            setBeatState(beat2Ref.current, 0, -26, false);
+            const fadeIn = clampValue(localP * 3, 0, 1);
+            setBeatState(beat3Ref.current, fadeIn, (1 - fadeIn) * 26, true);
+          }
 
-        if (heroP < 0.33) {
-          const localP = heroP / 0.33;
-          setHeroStep('01');
-          setHeroScrollLabelOpacity(clampValue(1 - localP * 1.8, 0, 1));
-
-          const beat1Opacity = clampValue(1 - Math.max(0, localP - 0.65) * 3, 0, 1);
-          setBeat1Style({
-            opacity: beat1Opacity,
-            transform: `translate3d(0, ${-localP * 28}px, 0)`,
-            pointerEvents: 'auto',
-          });
-          setBeat2Style({ opacity: 0, pointerEvents: 'none' });
-          setBeat3Style({ opacity: 0, pointerEvents: 'none' });
-        } else if (heroP < 0.68) {
-          const localP = (heroP - 0.33) / 0.35;
-          setHeroStep('02');
-          setHeroScrollLabelOpacity(0);
-
-          setBeat1Style({ opacity: 0, pointerEvents: 'none' });
-
-          const fadeIn = clampValue(localP * 3.2, 0, 1);
-          const fadeOut = clampValue(1 - Math.max(0, localP - 0.68) * 3.2, 0, 1);
-          const beat2Opacity = Math.min(fadeIn, fadeOut);
-          setBeat2Style({
-            opacity: beat2Opacity,
-            transform: `translate3d(0, ${(1 - fadeIn) * 26 - (1 - fadeOut) * 26}px, 0)`,
-            pointerEvents: 'auto',
-          });
-          setBeat3Style({ opacity: 0, pointerEvents: 'none' });
-        } else {
-          const localP = (heroP - 0.68) / 0.32;
-          setHeroStep('03');
-          setHeroScrollLabelOpacity(0);
-
-          setBeat1Style({ opacity: 0, pointerEvents: 'none' });
-          setBeat2Style({ opacity: 0, pointerEvents: 'none' });
-
-          const fadeIn = clampValue(localP * 3, 0, 1);
-          setBeat3Style({
-            opacity: fadeIn,
-            transform: `translate3d(0, ${(1 - fadeIn) * 26}px, 0)`,
-            pointerEvents: 'auto',
-          });
-        }
-      }
-
-      // B. NAVBAR ADAPTATIVE HEADER
-      const marcacaoEl = document.getElementById('marcacao');
-      const heroEl2 = document.getElementById('top');
-      if (heroEl2 && marcacaoEl) {
-        const heroRect = heroEl2.getBoundingClientRect();
-        const marcacaoRect = marcacaoEl.getBoundingClientRect();
-
-        const inHero = heroRect.bottom > 72;
-        const inMarcacao = marcacaoRect.top <= 72 && marcacaoRect.bottom >= 72;
-
-        if (inHero) {
-          setHeaderTheme('transparent');
-        } else if (inMarcacao) {
-          setHeaderTheme('dark');
-        } else {
-          setHeaderTheme('light');
-        }
-      }
-
-      // C. MANIFESTO PALABRA POR PALABRA
-      const manifestoEl = document.getElementById('manifesto-scrub');
-      if (manifestoEl) {
-        const mRect = manifestoEl.getBoundingClientRect();
-        const mStart = vh * 0.84;
-        const mEnd = vh * 0.24;
-        const mProg = clampValue((mStart - mRect.top) / (mStart - mEnd), 0, 1);
-        const litWords = mProg * manifestoWords.length;
-
-        const newOpacities = manifestoWords.map((_, idx) => {
-          const wordProg = clampValue(litWords - idx, 0, 1);
-          return 0.22 + wordProg * 0.78;
-        });
-        setManifestoWordOpacities(newOpacities);
-      }
-
-      // D. LÍNEA HORIZONTAL EN "A PRIMEIRA CONSULTA"
-      const consultaEl = document.getElementById('primeira-consulta');
-      if (consultaEl) {
-        const cRect = consultaEl.getBoundingClientRect();
-        const cProg = clampValue((vh * 0.75 - cRect.top) / (cRect.height * 0.75), 0, 1);
-        setConsultaLineWidth(12 + cProg * 88);
-        setStep2Active(cProg > 0.36);
-        setStep3Active(cProg > 0.72);
-      }
-
-      // E. A CLÍNICA: STICKY HORIZONTAL SCROLL + PARALLAX (MÓVIL Y ESCRITORIO)
-      const clinicaEl = document.getElementById('clinica');
-      if (clinicaEl && clinicaTrackRef.current) {
-        const clRect = clinicaEl.getBoundingClientRect();
-        const stickyH = clinicaStickyRef.current?.offsetHeight || vh;
-        const clScrollable = Math.max(1, clinicaEl.offsetHeight - stickyH);
-        const clProg = clampValue(-clRect.top / clScrollable, 0, 1);
-
-        const maxTranslateX = Math.max(0, clinicaTrackRef.current.scrollWidth - clinicaEl.clientWidth);
-        const currentX = -clProg * maxTranslateX;
-        setClinicaTrackTransform(`translate3d(${currentX}px, 0, 0)`);
-        setClinicaImageShift(clProg * 22);
-        setClinicaProgress(clProg);
-      }
-
-      // F. PARALLAX VERTICAL ON DATA-PARALLAX ELEMENTS
-      const parallaxEls = document.querySelectorAll('[data-parallax-id]');
-      const newTransforms: { [key: string]: string } = {};
-
-      parallaxEls.forEach((el) => {
-        const id = el.getAttribute('data-parallax-id');
-        const speedStr = el.getAttribute('data-parallax') || '0.18';
-        if (id) {
-          const parent = el.parentElement || el;
-          const rect = parent.getBoundingClientRect();
-          if (rect.bottom > 0 && rect.top < vh) {
-            const speed = parseFloat(speedStr);
-            const relY = (vh * 0.5 - (rect.top + rect.height * 0.5)) * speed;
-            newTransforms[id] = `translate3d(0, ${relY}px, 0)`;
+          if (heroStepRef.current !== nextHeroStep) {
+            heroStepRef.current = nextHeroStep;
+            setHeroStep(nextHeroStep);
           }
         }
-      });
-      setParallaxTransforms(newTransforms);
+
+        // B. NAVBAR ADAPTIVE HEADER (ONLY ON THEME CHANGE)
+        if (marcacaoEl) {
+          const marcacaoRect = marcacaoEl.getBoundingClientRect();
+          const inHero = heroRect.bottom > 72;
+          const inMarcacao = marcacaoRect.top <= 72 && marcacaoRect.bottom >= 72;
+          const nextTheme: 'transparent' | 'dark' | 'light' = inHero
+            ? 'transparent'
+            : inMarcacao
+            ? 'dark'
+            : 'light';
+
+          if (headerThemeRef.current !== nextTheme) {
+            headerThemeRef.current = nextTheme;
+            setHeaderTheme(nextTheme);
+          }
+        }
+      }
+
+      // C. MANIFESTO WORD SCRUB (DIRECT SPAN OPACITY WHEN NEAR VIEWPORT)
+      if (manifestoEl) {
+        const mRect = manifestoEl.getBoundingClientRect();
+        if (mRect.bottom > -160 && mRect.top < vh + 160) {
+          const mStart = vh * 0.84;
+          const mEnd = vh * 0.24;
+          const mProg = clampValue((mStart - mRect.top) / (mStart - mEnd), 0, 1);
+          const litWords = mProg * MANIFESTO_WORDS.length;
+          const spans = manifestoWordRefs.current;
+
+          for (let idx = 0; idx < MANIFESTO_WORDS.length; idx++) {
+            const span = spans[idx];
+            if (span) {
+              const wordProg = clampValue(litWords - idx, 0, 1);
+              span.style.opacity = (0.22 + wordProg * 0.78).toFixed(3);
+            }
+          }
+        }
+      }
+
+      // D. PRIMEIRA CONSULTA PROGRESS LINE & STEP DOTS
+      if (consultaEl) {
+        const cRect = consultaEl.getBoundingClientRect();
+        if (cRect.bottom > -120 && cRect.top < vh + 120) {
+          const cProg = clampValue((vh * 0.75 - cRect.top) / (cRect.height * 0.75), 0, 1);
+          if (consultaLineRef.current) {
+            consultaLineRef.current.style.width = `${12 + cProg * 88}%`;
+          }
+          const nextStep2 = cProg > 0.36;
+          const nextStep3 = cProg > 0.72;
+          if (step2ActiveRef.current !== nextStep2) {
+            step2ActiveRef.current = nextStep2;
+            setStep2Active(nextStep2);
+          }
+          if (step3ActiveRef.current !== nextStep3) {
+            step3ActiveRef.current = nextStep3;
+            setStep3Active(nextStep3);
+          }
+        }
+      }
+
+      // E. A CLÍNICA: STICKY HORIZONTAL SCROLL (DIRECT TRACK TRANSFORM)
+      if (clinicaEl && clinicaTrackRef.current) {
+        const clRect = clinicaEl.getBoundingClientRect();
+        if (clRect.bottom > -240 && clRect.top < vh + 240) {
+          const stickyH = clinicaStickyRef.current?.offsetHeight || vh;
+          const clScrollable = Math.max(1, clinicaEl.offsetHeight - stickyH);
+          const clProg = clampValue(-clRect.top / clScrollable, 0, 1);
+
+          const maxTranslateX = Math.max(0, clinicaTrackRef.current.scrollWidth - clinicaEl.clientWidth);
+          const currentX = -clProg * maxTranslateX;
+          clinicaTrackRef.current.style.transform = `translate3d(${currentX}px, 0, 0)`;
+
+          if (clinicaProgressBarRef.current) {
+            clinicaProgressBarRef.current.style.width = `${Math.max(8, clProg * 100)}%`;
+          }
+
+          const nextStepNum = Math.min(
+            CLINICA_SPACES.length,
+            Math.floor(clProg * CLINICA_SPACES.length) + 1
+          );
+          if (clinicaStepRef.current !== nextStepNum) {
+            clinicaStepRef.current = nextStepNum;
+            setClinicaStepNum(nextStepNum);
+          }
+        }
+      }
+
+      // F. VERTICAL PARALLAX (DESKTOP ONLY — AVOIDS MOBILE GPU REPAINTS)
+      for (let i = 0; i < parallaxNodes.length; i++) {
+        const { el, parent, speed } = parallaxNodes[i];
+        if (!isDesktop) {
+          if (el.style.transform && el.style.transform !== 'none') {
+            el.style.transform = 'none';
+          }
+          continue;
+        }
+        const rect = parent.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < vh) {
+          const relY = (vh * 0.5 - (rect.top + rect.height * 0.5)) * speed;
+          el.style.transform = `translate3d(0, ${relY.toFixed(1)}px, 0)`;
+        }
+      }
     };
 
     const handleScroll = () => {
-      animationFrameId = requestAnimationFrame(onScrollUpdate);
+      if (!isTicking) {
+        isTicking = true;
+        animationFrameId = requestAnimationFrame(() => {
+          onScrollUpdate();
+          isTicking = false;
+        });
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll);
+    window.addEventListener('resize', handleScroll, { passive: true });
     onScrollUpdate();
 
     return () => {
@@ -691,7 +803,7 @@ export default function App() {
       window.removeEventListener('resize', handleScroll);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [manifestoWords.length]);
+  }, []);
 
   const hoverTimeoutRef = useRef<number | null>(null);
 
@@ -764,8 +876,8 @@ export default function App() {
     <div className="selection:bg-ink selection:text-paper font-sans relative">
       <div className="grain-overlay" />
 
-      {/* Orbes de luz ambiental difuminados para refracción Liquid Glass iOS 27 */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      {/* Orbes de luz ambiental difuminados (escritorio — evita sobrecarga GPU en móvil) */}
+      <div className="hidden md:block fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div
           className="absolute -top-[12%] left-[10%] w-[55vw] h-[55vw] max-w-[650px] max-h-[650px] rounded-full opacity-25 filter blur-[95px]"
           style={{
@@ -850,6 +962,7 @@ export default function App() {
                 transformOrigin: '50% 50%',
               }}
               loading="eager"
+              fetchPriority="high"
               decoding="async"
             />
           </div>
@@ -871,8 +984,8 @@ export default function App() {
             <div className="container-page relative h-full">
               {/* PASO 01 / 03 */}
               <div
+                ref={beat1Ref}
                 id="hero-beat-1"
-                style={beat1Style}
                 className="absolute inset-x-5 bottom-[24%] sm:inset-x-8 sm:bottom-[20%] lg:inset-x-12 lg:bottom-[17%] will-change-transform"
               >
                 <p className="eyebrow text-paper/95 mb-3 sm:mb-3.5 tracking-[0.16em] sm:tracking-[0.2em] text-[10.5px] sm:text-xs font-semibold drop-shadow-[0_1px_4px_rgba(45,50,119,0.35)]">
@@ -885,9 +998,10 @@ export default function App() {
 
               {/* PASO 02 / 03 */}
               <div
+                ref={beat2Ref}
                 id="hero-beat-2"
-                style={beat2Style}
-                className="absolute inset-x-5 bottom-[24%] sm:inset-x-8 sm:bottom-[20%] lg:inset-x-12 lg:bottom-[17%] opacity-0 pointer-events-none will-change-transform"
+                style={{ opacity: 0, pointerEvents: 'none' }}
+                className="absolute inset-x-5 bottom-[24%] sm:inset-x-8 sm:bottom-[20%] lg:inset-x-12 lg:bottom-[17%] will-change-transform"
               >
                 <p className="eyebrow text-paper/95 mb-3 sm:mb-3.5 tracking-[0.16em] sm:tracking-[0.2em] text-[10.5px] sm:text-xs font-semibold drop-shadow-[0_1px_4px_rgba(45,50,119,0.35)]">
                   10 ANOS DE EXCELÊNCIA MÉDICA
@@ -899,9 +1013,10 @@ export default function App() {
 
               {/* PASO 03 / 03 */}
               <div
+                ref={beat3Ref}
                 id="hero-beat-3"
-                style={beat3Style}
-                className="absolute inset-x-5 bottom-[22%] sm:inset-x-8 sm:bottom-[18%] lg:inset-x-12 lg:bottom-[15%] opacity-0 pointer-events-none will-change-transform"
+                style={{ opacity: 0, pointerEvents: 'none' }}
+                className="absolute inset-x-5 bottom-[22%] sm:inset-x-8 sm:bottom-[18%] lg:inset-x-12 lg:bottom-[15%] will-change-transform"
               >
                 <p className="eyebrow text-paper/95 mb-3 sm:mb-3.5 tracking-[0.16em] sm:tracking-[0.2em] text-[10.5px] sm:text-xs font-semibold drop-shadow-[0_1px_4px_rgba(45,50,119,0.35)]">
                   CUIDADO HUMANO & TRANQUILIDADE
@@ -946,9 +1061,9 @@ export default function App() {
               {/* Pie del Hero — deja espacio a la derecha en móvil para el botón azul del bot */}
               <div className="absolute left-5 right-20 bottom-5 sm:inset-x-8 sm:bottom-7 lg:inset-x-12 flex items-center justify-between text-paper/85">
                 <span
+                  ref={heroScrollLabelRef}
                   id="hero-scroll-label"
-                  style={{ opacity: heroScrollLabelOpacity }}
-                  className="inline-flex items-center gap-2.5 sm:gap-3.5 eyebrow !text-[10px] sm:!text-[11.5px] text-paper/85 transition-opacity duration-500 select-none"
+                  className="inline-flex items-center gap-2.5 sm:gap-3.5 eyebrow !text-[10px] sm:!text-[11.5px] text-paper/85 select-none"
                 >
                   <span>CONTINUAR A DESCER</span>
                   <span
@@ -981,11 +1096,14 @@ export default function App() {
               id="manifesto-scrub"
               className="font-serif text-[clamp(1.85rem,4.3vw,3.9rem)] leading-[1.18] tracking-tight font-normal text-center text-ink text-balance"
             >
-              {manifestoWords.map((word, idx) => (
+              {MANIFESTO_WORDS.map((word, idx) => (
                 <span
                   key={idx}
-                  className="m-word transition-colors duration-150 inline-block"
-                  style={{ opacity: manifestoWordOpacities[idx] ?? 0.22 }}
+                  ref={(el) => {
+                    manifestoWordRefs.current[idx] = el;
+                  }}
+                  className="m-word inline-block"
+                  style={{ opacity: 0.22 }}
                 >
                   {word}&nbsp;
                 </span>
@@ -998,20 +1116,23 @@ export default function App() {
       {/* =====================================================
            3. BANNER CONSULTA 3D CON PARALLAX INTERNO + 4 CIFRAS
            ===================================================== */}
-      <section className="relative w-full h-[72vh] sm:h-[78vh] md:h-[90vh] overflow-hidden bg-ink">
+      <section
+        ref={bannerSectionRef}
+        className="relative w-full h-[72vh] sm:h-[78vh] md:h-[90vh] overflow-hidden bg-ink"
+      >
         <video
+          ref={bannerVideoRef}
           data-parallax-id="banner-3d"
           data-parallax="0.22"
-          style={{ transform: parallaxTransforms['banner-3d'] || 'none' }}
+          src={shouldLoadBannerVideo ? '/banner-video.mp4' : undefined}
+          preload="none"
           autoPlay
           loop
           muted
           playsInline
-          poster="/hero-frames/frame_0001.webp"
-          className="absolute -top-[13%] left-0 w-full h-[126%] object-cover object-center will-change-transform pointer-events-none"
-        >
-          <source src="/banner-video.mp4" type="video/mp4" />
-        </video>
+          poster="https://clinica-santa-maria-dos-olivais.b-cdn.net/clinica_3.jpeg"
+          className="absolute -top-[13%] left-0 w-full h-[126%] object-cover object-center md:will-change-transform pointer-events-none"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/25 to-transparent" />
 
         <div className="absolute inset-x-0 bottom-8 sm:bottom-10 md:bottom-14">
@@ -1098,6 +1219,7 @@ export default function App() {
                           src={t.img}
                           alt={t.title}
                           loading={index < 2 ? 'eager' : 'lazy'}
+                          decoding="async"
                           className="w-full h-full object-cover object-center block"
                         />
                       </div>
@@ -1291,10 +1413,11 @@ export default function App() {
                 <img
                   data-parallax-id="consulta-img"
                   data-parallax="0.16"
-                  style={{ transform: parallaxTransforms['consulta-img'] || 'none' }}
                   src="https://clinica-santa-maria-dos-olivais.b-cdn.net/ouvimos_clinica_santa_maria_dos_olivais.jpeg"
                   alt="Primeira consulta - Começamos por ouvir"
-                  className="absolute -top-[12%] left-0 w-full h-[124%] object-cover will-change-transform"
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute -top-[12%] left-0 w-full h-[124%] object-cover md:will-change-transform"
                 />
               </div>
             </div>
@@ -1303,9 +1426,10 @@ export default function App() {
           <div className="relative pt-10">
             <div className="hidden md:block absolute top-0 left-0 w-full h-[1px] bg-ink/15" />
             <div
+              ref={consultaLineRef}
               id="consulta-progress-line"
-              style={{ width: `${consultaLineWidth}%` }}
-              className="hidden md:block absolute top-0 left-0 h-[1px] bg-ink transition-all duration-150"
+              style={{ width: '15%' }}
+              className="hidden md:block absolute top-0 left-0 h-[1px] bg-ink"
             />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -1435,6 +1559,8 @@ export default function App() {
                       <img
                         src={member.img}
                         alt={member.name}
+                        loading={index < 2 ? 'eager' : 'lazy'}
+                        decoding="async"
                         style={{
                           objectPosition: member.imagePosition || '50% 0%',
                           transform: member.scale ? `scale(${member.scale})` : undefined,
@@ -1494,7 +1620,7 @@ export default function App() {
       {/* =====================================================
            7. A CLÍNICA — STICKY HORIZONTAL SCROLL (MÓVIL Y ESCRITORIO)
            ===================================================== */}
-      <section id="clinica" className="relative bg-stone">
+      <section id="clinica" ref={clinicaSectionRef} className="relative bg-stone">
         <div className="h-[440vh] md:h-[500vh] relative">
           <div
             ref={clinicaStickyRef}
@@ -1514,17 +1640,16 @@ export default function App() {
               {/* Indicador de progreso del recorrido horizontal (01 / 09 -> 09 / 09) */}
               <div className="flex items-center gap-3 w-full sm:w-auto max-w-[220px]">
                 <span className="font-serif text-xs text-ink font-semibold shrink-0">
-                  {String(
-                    Math.min(CLINICA_SPACES.length, Math.floor(clinicaProgress * CLINICA_SPACES.length) + 1)
-                  ).padStart(2, '0')}{' '}
+                  {String(clinicaStepNum).padStart(2, '0')}{' '}
                   <span className="text-muted font-normal">
                     / {String(CLINICA_SPACES.length).padStart(2, '0')}
                   </span>
                 </span>
                 <div className="flex-1 sm:w-28 h-[2px] bg-ink/15 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-clinic-navy rounded-full transition-all duration-150 ease-out"
-                    style={{ width: `${Math.max(8, clinicaProgress * 100)}%` }}
+                    ref={clinicaProgressBarRef}
+                    className="h-full bg-clinic-navy rounded-full"
+                    style={{ width: '8%' }}
                   />
                 </div>
               </div>
@@ -1534,10 +1659,10 @@ export default function App() {
               <div
                 ref={clinicaTrackRef}
                 id="clinica-horizontal-track"
-                style={{ transform: clinicaTrackTransform }}
+                style={{ transform: 'translate3d(0px, 0, 0)' }}
                 className="flex items-start sm:items-end gap-4 sm:gap-6 md:gap-8 px-6 sm:px-[clamp(1.25rem,4vw,3.5rem)] w-max will-change-transform"
               >
-                {CLINICA_SPACES.map((space) => (
+                {CLINICA_SPACES.map((space, idx) => (
                   <div
                     key={space.num}
                     className="group w-[84vw] sm:w-[540px] md:w-[620px] lg:w-[680px] shrink-0 cursor-pointer"
@@ -1548,7 +1673,8 @@ export default function App() {
                         className="clinica-editorial-img w-full h-full object-cover object-center block group-hover:scale-[1.025] transition-transform duration-700 ease-out"
                         src={space.src}
                         alt={`${space.num} ${space.title}`}
-                        loading="eager"
+                        loading={shouldPreloadClinica || idx < 2 ? 'eager' : 'lazy'}
+                        decoding="async"
                       />
                       {/* Sutil viñeta elegante */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-40 group-hover:opacity-15 transition-opacity duration-500 pointer-events-none" />
@@ -1579,16 +1705,16 @@ export default function App() {
         <img
           data-parallax-id="banner-smile"
           data-parallax="0.24"
-          style={{ transform: parallaxTransforms['banner-smile'] || 'none' }}
           src="https://clinica-santa-maria-dos-olivais.b-cdn.net/clinica_dentaria_santa_maria_dos_olivais_sorrisos.jpg"
           onError={(e) => {
             const target = e.currentTarget;
             target.onerror = null;
-            target.src =
-              'https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&w=2400&q=90';
+            target.src = 'https://clinica-santa-maria-dos-olivais.b-cdn.net/clinica_1.jpeg';
           }}
           alt="Sorrisos na Clínica Dentária Santa Maria dos Olivais"
-          className="absolute -top-[13%] left-0 w-full h-[126%] object-cover object-center will-change-transform"
+          loading="lazy"
+          decoding="async"
+          className="absolute -top-[13%] left-0 w-full h-[126%] object-cover object-center md:will-change-transform"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/40 to-black/25" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-black/25" />
@@ -1924,6 +2050,8 @@ export default function App() {
                       <img
                         src="https://clinica-santa-maria-dos-olivais.b-cdn.net/clinica_dentaria_santa_maria_dos_olivais_moscavide.jpg"
                         alt="Clínica Santa Maria dos Olivais — Estrada de Moscavide N 32C Lisboa"
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent" />

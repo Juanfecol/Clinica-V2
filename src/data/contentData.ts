@@ -92,7 +92,7 @@ export const defaultContentData = {
     {
       name: "Dra. Ladine",
       title: "Clínica Geral & Reabilitação",
-      img: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=900&q=80",
+      img: "https://clinica-santa-maria-dos-olivais.b-cdn.net/Icono-Nocturno.png",
       bio: "Especialista em Higiene Oral, Restaurações, Próteses e Bruxismo.",
       imgPosition: "object-top",
       omd: "Cédula OMD"

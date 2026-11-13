@@ -61,20 +61,8 @@ export const TreatmentRibbonItem: React.FC<TreatmentRibbonItemProps> = ({
 
     observer.observe(el);
 
-    const checkScrollPosition = () => {
-      if (!itemRef.current) return;
-      const rect = itemRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-      if (rect.top > windowHeight + 20) {
-        setIsEntered(false);
-      }
-    };
-
-    window.addEventListener('scroll', checkScrollPosition, { passive: true });
-
     return () => {
       observer.disconnect();
-      window.removeEventListener('scroll', checkScrollPosition);
     };
   }, []);
 
