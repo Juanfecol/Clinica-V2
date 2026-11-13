@@ -45,11 +45,8 @@ export const TreatmentRibbonItem: React.FC<TreatmentRibbonItemProps> = ({
           const windowHeight = window.innerHeight || document.documentElement.clientHeight;
 
           if (entry.isIntersecting) {
-            // When moving into the viewport (scrolling down or up)
             setIsEntered(true);
           } else {
-            // If the element exits through the BOTTOM (i.e. user scrolled UP)
-            // Reset so that when the user scrolls back DOWN, it re-enters like a staircase ribbon
             if (rect.top > windowHeight * 0.88) {
               setIsEntered(false);
             }
@@ -64,7 +61,6 @@ export const TreatmentRibbonItem: React.FC<TreatmentRibbonItemProps> = ({
 
     observer.observe(el);
 
-    // Fast scroll check: ensures reset when the user quickly scrolls up past this item
     const checkScrollPosition = () => {
       if (!itemRef.current) return;
       const rect = itemRef.current.getBoundingClientRect();
@@ -82,7 +78,6 @@ export const TreatmentRibbonItem: React.FC<TreatmentRibbonItemProps> = ({
     };
   }, []);
 
-  // Cascading stair-step stagger (0ms, 75ms, 150ms, 225ms...) for items entering together
   const staggerDelay = isEntered ? `${(index % 4) * 80}ms` : '0ms';
 
   return (

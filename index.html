@@ -45,6 +45,38 @@
       src="https://link.msgsndr.com/js/external-tracking.js"
       data-tracking-id="tk_9930d7de72e743b1bd55d92f837def98">
     </script>
+
+    <!-- Automatic Device Language Translation (Google Translate Integration) -->
+    <div id="google_translate_element" style="display:none;position:absolute;top:-9999px;left:-9999px;"></div>
+    <script type="text/javascript">
+      (function() {
+        try {
+          var saved = localStorage.getItem('user_language_choice');
+          var targetLang = saved;
+          if (!targetLang) {
+            var navLang = (navigator.languages && navigator.languages[0]) || navigator.language || 'pt';
+            var shortLang = navLang.split('-')[0].toLowerCase();
+            var supported = ['pt', 'en', 'es', 'fr', 'de', 'it', 'nl', 'uk', 'ro', 'ru', 'zh-cn'];
+            if (supported.indexOf(shortLang) !== -1 && shortLang !== 'pt') {
+              targetLang = shortLang;
+            }
+          }
+          if (targetLang && targetLang !== 'pt') {
+            document.cookie = 'googtrans=/pt/' + targetLang + '; path=/;';
+            document.cookie = 'googtrans=/pt/' + targetLang + '; path=/; domain=' + window.location.hostname + ';';
+          }
+        } catch (e) {}
+      })();
+
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'pt',
+          autoDisplay: false,
+          includedLanguages: 'pt,en,es,fr,de,it,nl,uk,ro,ru,zh-CN'
+        }, 'google_translate_element');
+      }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </body>
 </html>
 

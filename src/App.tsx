@@ -6,7 +6,6 @@ import ChatbotModal from './components/ChatbotModal';
 import { openLeadConnectorWidget } from './utils/leadConnector';
 import ModularReveal from './components/ModularReveal';
 import { TreatmentRibbonItem } from './components/TreatmentRibbonItem';
-import { MobileQuickBar } from './components/MobileQuickBar';
 import { GOOGLE_REVIEWS } from './data/reviewsData';
 import {
   formatWhatsAppMessage,
@@ -345,18 +344,111 @@ export default function App() {
   const [step2Active, setStep2Active] = useState<boolean>(false);
   const [step3Active, setStep3Active] = useState<boolean>(false);
 
-  // Clinica horizontal track state
+  // Clinica horizontal track state (mobile + desktop sticky scroll)
+  const clinicaStickyRef = useRef<HTMLDivElement>(null);
   const clinicaTrackRef = useRef<HTMLDivElement>(null);
   const [clinicaTrackTransform, setClinicaTrackTransform] = useState<string>('translate3d(0px, 0, 0)');
   const [clinicaImageShift, setClinicaImageShift] = useState<number>(0);
+  const [clinicaProgress, setClinicaProgress] = useState<number>(0);
 
   // Parallax transforms state map
   const [parallaxTransforms, setParallaxTransforms] = useState<{ [key: string]: string }>({});
 
-  // Treatment hover state
+  // Treatment hover state (desktop) & Reel carousel state (mobile)
   const [activeTreatment, setActiveTreatment] = useState<TreatmentData>(TREATMENTS[0]);
   const [treatmentImageOpacity, setTreatmentImageOpacity] = useState<number>(1);
   const [treatmentImageScale, setTreatmentImageScale] = useState<number>(1);
+  const treatmentCarouselRef = useRef<HTMLDivElement>(null);
+  const [mobileTreatmentIdx, setMobileTreatmentIdx] = useState<number>(0);
+
+  const handleMobileTreatmentScroll = () => {
+    const container = treatmentCarouselRef.current;
+    if (!container) return;
+    const { scrollLeft, scrollWidth, clientWidth } = container;
+    const maxScroll = scrollWidth - clientWidth;
+    if (maxScroll <= 0) return;
+    const ratio = clampValue(scrollLeft / maxScroll, 0, 1);
+    const idx = Math.round(ratio * (TREATMENTS.length - 1));
+    setMobileTreatmentIdx((prev) => (prev !== idx ? idx : prev));
+  };
+
+  const scrollMobileTreatment = (direction: -1 | 1) => {
+    const container = treatmentCarouselRef.current;
+    if (!container) return;
+    const nextIdx = clampValue(mobileTreatmentIdx + direction, 0, TREATMENTS.length - 1);
+    const targetCard = container.querySelector(
+      `[data-treatment-card-idx="${nextIdx}"]`
+    ) as HTMLElement | null;
+    if (targetCard) {
+      const targetLeft =
+        targetCard.offsetLeft - (container.clientWidth - targetCard.offsetWidth) / 2;
+      container.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
+      setMobileTreatmentIdx(nextIdx);
+    }
+  };
+
+  // Horizontal touch drag sync for sticky #clinica on mobile
+  useEffect(() => {
+    const stickyEl = clinicaStickyRef.current;
+    if (!stickyEl) return;
+
+    let startX = 0;
+    let startY = 0;
+    let lastX = 0;
+    let lockAxis: 'none' | 'x' | 'y' = 'none';
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      lastX = startX;
+      lockAxis = 'none';
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+
+      if (lockAxis === 'none') {
+        if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+        lockAxis = Math.abs(dx) > Math.abs(dy) * 1.15 ? 'x' : 'y';
+      }
+
+      if (lockAxis === 'x') {
+        const clinicaEl = document.getElementById('clinica');
+        const trackEl = clinicaTrackRef.current;
+        if (!clinicaEl || !trackEl) return;
+
+        const clRect = clinicaEl.getBoundingClientRect();
+        const stickyH = stickyEl.offsetHeight || window.innerHeight;
+        const clScrollable = Math.max(1, clinicaEl.offsetHeight - stickyH);
+        const clProg = clampValue(-clRect.top / clScrollable, 0, 1);
+
+        const stepX = lastX - touch.clientX;
+        lastX = touch.clientX;
+
+        const isPinned = clRect.top <= 8 && clRect.bottom >= stickyH - 8;
+        const canAdvance = (stepX > 0 && clProg < 0.998) || (stepX < 0 && clProg > 0.002);
+
+        if (isPinned && canAdvance) {
+          e.preventDefault();
+          const maxTranslateX = Math.max(1, trackEl.scrollWidth - clinicaEl.clientWidth);
+          const scrollDeltaY = stepX * (clScrollable / maxTranslateX);
+          window.scrollBy(0, scrollDeltaY);
+        }
+      }
+    };
+
+    stickyEl.addEventListener('touchstart', onTouchStart, { passive: true });
+    stickyEl.addEventListener('touchmove', onTouchMove, { passive: false });
+
+    return () => {
+      stickyEl.removeEventListener('touchstart', onTouchStart);
+      stickyEl.removeEventListener('touchmove', onTouchMove);
+    };
+  }, []);
 
   // Review carousel state
   const [reviewIdx, setReviewIdx] = useState<number>(0);
@@ -551,17 +643,19 @@ export default function App() {
         setStep3Active(cProg > 0.72);
       }
 
-      // E. A CLÍNICA: STICKY HORIZONTAL SCROLL + PARALLAX
+      // E. A CLÍNICA: STICKY HORIZONTAL SCROLL + PARALLAX (MÓVIL Y ESCRITORIO)
       const clinicaEl = document.getElementById('clinica');
       if (clinicaEl && clinicaTrackRef.current) {
         const clRect = clinicaEl.getBoundingClientRect();
-        const clScrollable = clinicaEl.offsetHeight - vh;
+        const stickyH = clinicaStickyRef.current?.offsetHeight || vh;
+        const clScrollable = Math.max(1, clinicaEl.offsetHeight - stickyH);
         const clProg = clampValue(-clRect.top / clScrollable, 0, 1);
 
-        const maxTranslateX = Math.max(0, clinicaTrackRef.current.scrollWidth - window.innerWidth);
+        const maxTranslateX = Math.max(0, clinicaTrackRef.current.scrollWidth - clinicaEl.clientWidth);
         const currentX = -clProg * maxTranslateX;
         setClinicaTrackTransform(`translate3d(${currentX}px, 0, 0)`);
         setClinicaImageShift(clProg * 22);
+        setClinicaProgress(clProg);
       }
 
       // F. PARALLAX VERTICAL ON DATA-PARALLAX ELEMENTS
@@ -656,14 +750,14 @@ export default function App() {
   };
 
   // Dynamic header style with Apple iOS 27 Liquid Glass
-  let headerClass = 'fixed inset-x-0 top-0 z-50 transition-all duration-500 py-5 text-paper bg-transparent';
+  let headerClass = 'fixed inset-x-0 top-0 z-50 transition-all duration-500 py-3 sm:py-5 text-paper bg-transparent';
 
   if (headerTheme === 'dark') {
     headerClass =
-      'fixed inset-x-0 top-0 z-50 transition-all duration-500 py-3.5 text-paper bg-[#14161A]/60 backdrop-blur-[24px] saturate-[185%] border-b border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.35)]';
+      'fixed inset-x-0 top-0 z-50 transition-all duration-500 py-2.5 sm:py-3.5 text-paper bg-[#14161A]/60 backdrop-blur-[24px] saturate-[185%] border-b border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.35)]';
   } else if (headerTheme === 'light') {
     headerClass =
-      'fixed inset-x-0 top-0 z-50 transition-all duration-500 py-3.5 text-ink bg-white/65 backdrop-blur-[24px] saturate-[185%] border-b border-white/60 shadow-[0_12px_32px_rgba(45,50,119,0.06)]';
+      'fixed inset-x-0 top-0 z-50 transition-all duration-500 py-2.5 sm:py-3.5 text-ink bg-white/65 backdrop-blur-[24px] saturate-[185%] border-b border-white/60 shadow-[0_12px_32px_rgba(45,50,119,0.06)]';
   }
 
   return (
@@ -701,7 +795,7 @@ export default function App() {
             <img
               src="https://clinica-santa-maria-dos-olivais.b-cdn.net/logo_clinica_santa_maria_dos_olivais-removebg-preview.png"
               alt="Clínica Santa Maria dos Olivais"
-              className="h-[78px] sm:h-[94px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+              className="h-[58px] sm:h-[94px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]"
               loading="eager"
             />
           </a>
@@ -729,7 +823,7 @@ export default function App() {
             type="button"
             onClick={() => handleOpenChatbot()}
             variant="primary"
-            className="!text-[12.5px] !px-6 !py-2.5 !font-semibold shadow-md cursor-pointer"
+            className="!text-[12px] sm:!text-[12.5px] !px-5 sm:!px-6 !py-2 sm:!py-2.5 !font-semibold shadow-md cursor-pointer"
           >
             Marcar
           </LiquidButton>
@@ -779,12 +873,12 @@ export default function App() {
               <div
                 id="hero-beat-1"
                 style={beat1Style}
-                className="absolute inset-x-5 bottom-[20%] sm:inset-x-8 lg:inset-x-12 lg:bottom-[17%] will-change-transform"
+                className="absolute inset-x-5 bottom-[24%] sm:inset-x-8 sm:bottom-[20%] lg:inset-x-12 lg:bottom-[17%] will-change-transform"
               >
-                <p className="eyebrow text-paper/95 mb-3.5 tracking-[0.2em] text-[11px] sm:text-xs font-semibold drop-shadow-[0_1px_4px_rgba(45,50,119,0.35)]">
+                <p className="eyebrow text-paper/95 mb-3 sm:mb-3.5 tracking-[0.16em] sm:tracking-[0.2em] text-[10.5px] sm:text-xs font-semibold drop-shadow-[0_1px_4px_rgba(45,50,119,0.35)]">
                   CLÍNICA SANTA MARIA DOS OLIVAIS · LISBOA
                 </p>
-                <p className="display hero-type text-[clamp(2.2rem,5.8vw,6rem)] leading-[1.08] max-w-[16ch] drop-shadow-[0_2px_14px_rgba(45,50,119,0.35)]">
+                <p className="display hero-type text-[clamp(2rem,5.8vw,6rem)] leading-[1.08] max-w-[16ch] drop-shadow-[0_2px_14px_rgba(45,50,119,0.35)]">
                   O seu sorriso em mãos <em>médicas de total confiança.</em>
                 </p>
               </div>
@@ -793,12 +887,12 @@ export default function App() {
               <div
                 id="hero-beat-2"
                 style={beat2Style}
-                className="absolute inset-x-5 bottom-[20%] sm:inset-x-8 lg:inset-x-12 lg:bottom-[17%] opacity-0 pointer-events-none will-change-transform"
+                className="absolute inset-x-5 bottom-[24%] sm:inset-x-8 sm:bottom-[20%] lg:inset-x-12 lg:bottom-[17%] opacity-0 pointer-events-none will-change-transform"
               >
-                <p className="eyebrow text-paper/95 mb-3.5 tracking-[0.2em] text-[11px] sm:text-xs font-semibold drop-shadow-[0_1px_4px_rgba(45,50,119,0.35)]">
+                <p className="eyebrow text-paper/95 mb-3 sm:mb-3.5 tracking-[0.16em] sm:tracking-[0.2em] text-[10.5px] sm:text-xs font-semibold drop-shadow-[0_1px_4px_rgba(45,50,119,0.35)]">
                   10 ANOS DE EXCELÊNCIA MÉDICA
                 </p>
-                <p className="display hero-type text-[clamp(2.2rem,5.8vw,6rem)] leading-[1.08] max-w-[16ch] drop-shadow-[0_2px_14px_rgba(45,50,119,0.35)]">
+                <p className="display hero-type text-[clamp(2rem,5.8vw,6rem)] leading-[1.08] max-w-[16ch] drop-shadow-[0_2px_14px_rgba(45,50,119,0.35)]">
                   Medicina dentária de precisão, <em>tecnologia avançada e escuta atenta.</em>
                 </p>
               </div>
@@ -807,20 +901,20 @@ export default function App() {
               <div
                 id="hero-beat-3"
                 style={beat3Style}
-                className="absolute inset-x-5 bottom-[18%] sm:inset-x-8 lg:inset-x-12 lg:bottom-[15%] opacity-0 pointer-events-none will-change-transform"
+                className="absolute inset-x-5 bottom-[22%] sm:inset-x-8 sm:bottom-[18%] lg:inset-x-12 lg:bottom-[15%] opacity-0 pointer-events-none will-change-transform"
               >
-                <p className="eyebrow text-paper/95 mb-3.5 tracking-[0.2em] text-[11px] sm:text-xs font-semibold drop-shadow-[0_1px_4px_rgba(45,50,119,0.35)]">
+                <p className="eyebrow text-paper/95 mb-3 sm:mb-3.5 tracking-[0.16em] sm:tracking-[0.2em] text-[10.5px] sm:text-xs font-semibold drop-shadow-[0_1px_4px_rgba(45,50,119,0.35)]">
                   CUIDADO HUMANO & TRANQUILIDADE
                 </p>
-                <p className="display hero-type text-[clamp(2.2rem,5.8vw,6rem)] leading-[1.08] max-w-[16ch] mb-7 drop-shadow-[0_2px_14px_rgba(45,50,119,0.35)]">
+                <p className="display hero-type text-[clamp(2rem,5.8vw,6rem)] leading-[1.08] max-w-[16ch] mb-6 sm:mb-7 drop-shadow-[0_2px_14px_rgba(45,50,119,0.35)]">
                   Tratamentos sem dor, onde cada detalhe é <em>pensado para a sua calma.</em>
                 </p>
-                <div className="flex flex-wrap items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                   <LiquidButton
                     type="button"
                     onClick={() => handleOpenChatbot()}
                     variant="primary"
-                    className="!px-7 !py-3.5 !text-[13px] !font-medium shadow-lg cursor-pointer"
+                    className="!px-6 sm:!px-7 !py-3 sm:!py-3.5 !text-[12.5px] sm:!text-[13px] !font-medium shadow-lg cursor-pointer"
                   >
                     <span>Marcar consulta</span>
                   </LiquidButton>
@@ -829,41 +923,41 @@ export default function App() {
                     target="_blank"
                     rel="noopener noreferrer"
                     variant="lime"
-                    className="!px-7 !py-3.5 !text-[13px] !font-semibold shadow-md"
+                    className="!px-6 sm:!px-7 !py-3 sm:!py-3.5 !text-[12.5px] sm:!text-[13px] !font-semibold shadow-md"
                   >
                     <span>WhatsApp</span>
                   </LiquidButton>
                 </div>
               </div>
 
-              {/* Nome e especialidade da Dra. Ana Mata — centro inferior da imagem, sem moldura */}
+              {/* Nome e especialidade da Dra. Ana Mata — sem sobreposição em móvel */}
               <div
-                className="absolute right-[12%] sm:right-[24%] lg:right-[32%] bottom-3.5 sm:bottom-4 lg:bottom-5 z-20 pointer-events-none select-none flex flex-col items-center text-center px-2"
+                className="absolute right-4 bottom-[4.75rem] sm:right-[24%] lg:right-[32%] sm:bottom-4 lg:bottom-5 z-20 pointer-events-none select-none flex flex-col items-end text-right sm:items-center sm:text-center px-1 sm:px-2"
                 aria-label="Dra. Ana Mata, Médica Dentista Especialista em Implantologia"
               >
-                <p className="font-serif text-[13px] sm:text-[15px] lg:text-[16px] text-ink font-semibold tracking-tight leading-tight drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
+                <p className="font-serif text-[12.5px] sm:text-[15px] lg:text-[16px] text-ink font-semibold tracking-tight leading-tight drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
                   Dra. Ana Mata
                 </p>
-                <p className="font-serif italic text-[10px] sm:text-[11.5px] lg:text-[12.5px] text-ink/75 font-normal tracking-normal mt-0.5 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
+                <p className="font-serif italic text-[9.5px] sm:text-[11.5px] lg:text-[12.5px] text-ink/80 font-normal tracking-normal mt-0.5 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
                   Diretora Clínica · Especialista em Implantologia
                 </p>
               </div>
 
-              {/* Pie del Hero */}
-              <div className="absolute inset-x-5 bottom-7 sm:inset-x-8 lg:inset-x-12 flex items-center justify-between text-paper/85">
+              {/* Pie del Hero — deja espacio a la derecha en móvil para el botón azul del bot */}
+              <div className="absolute left-5 right-20 bottom-5 sm:inset-x-8 sm:bottom-7 lg:inset-x-12 flex items-center justify-between text-paper/85">
                 <span
                   id="hero-scroll-label"
                   style={{ opacity: heroScrollLabelOpacity }}
-                  className="inline-flex items-center gap-3.5 eyebrow text-paper/85 transition-opacity duration-500 select-none"
+                  className="inline-flex items-center gap-2.5 sm:gap-3.5 eyebrow !text-[10px] sm:!text-[11.5px] text-paper/85 transition-opacity duration-500 select-none"
                 >
                   <span>CONTINUAR A DESCER</span>
                   <span
                     aria-hidden="true"
                     className="scroll-line scroll-line-light block shrink-0"
-                    style={{ height: '2rem', width: '1.5px' }}
+                    style={{ height: '1.75rem', width: '1.5px' }}
                   />
                 </span>
-                <div className="ml-auto font-serif text-base tracking-widest">
+                <div className="ml-auto font-serif text-sm sm:text-base tracking-widest">
                   <span id="hero-step-num" className="text-paper">
                     {heroStep}
                   </span>
@@ -879,13 +973,13 @@ export default function App() {
       {/* =====================================================
            2. MANIFESTO (SCROLL WORD SCRUB)
            ===================================================== */}
-      <section className="py-36 md:py-52 bg-paper">
+      <section className="py-24 sm:py-36 md:py-52 bg-paper">
         <div className="container-page">
           <div className="max-w-4xl mx-auto text-center">
-            <p className="eyebrow text-muted mb-10">MANIFESTO</p>
+            <p className="eyebrow text-muted mb-8 sm:mb-10">MANIFESTO</p>
             <p
               id="manifesto-scrub"
-              className="font-serif text-[clamp(2.1rem,4.3vw,3.9rem)] leading-[1.18] tracking-tight font-normal text-center text-ink text-balance"
+              className="font-serif text-[clamp(1.85rem,4.3vw,3.9rem)] leading-[1.18] tracking-tight font-normal text-center text-ink text-balance"
             >
               {manifestoWords.map((word, idx) => (
                 <span
@@ -904,7 +998,7 @@ export default function App() {
       {/* =====================================================
            3. BANNER CONSULTA 3D CON PARALLAX INTERNO + 4 CIFRAS
            ===================================================== */}
-      <section className="relative w-full h-[78vh] md:h-[90vh] overflow-hidden bg-ink">
+      <section className="relative w-full h-[72vh] sm:h-[78vh] md:h-[90vh] overflow-hidden bg-ink">
         <video
           data-parallax-id="banner-3d"
           data-parallax="0.22"
@@ -918,34 +1012,42 @@ export default function App() {
         >
           <source src="/banner-video.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/25 to-transparent" />
 
-        <div className="absolute inset-x-0 bottom-10 md:bottom-14">
+        <div className="absolute inset-x-0 bottom-8 sm:bottom-10 md:bottom-14">
           <div className="container-page">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-paper">
-              <ModularReveal delay={1} enableMouseGlow className="border-t border-paper/25 pt-5 rounded-xl">
-                <p className="font-serif text-4xl md:text-6xl font-light mb-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 sm:gap-8 text-paper">
+              <ModularReveal delay={1} enableMouseGlow className="border-t border-paper/25 pt-4 sm:pt-5 rounded-xl">
+                <p className="font-serif text-3xl sm:text-4xl md:text-6xl font-light mb-1.5 sm:mb-2">
                   <AnimatedCounter target={10} prefix="+" duration={1200} />
                 </p>
-                <p className="eyebrow text-paper/75">ANOS DE EXPERIÊNCIA</p>
+                <p className="eyebrow !text-[10px] sm:!text-[11.5px] !tracking-[0.14em] sm:!tracking-[0.22em] text-paper/75">
+                  ANOS DE EXPERIÊNCIA
+                </p>
               </ModularReveal>
-              <ModularReveal delay={2} enableMouseGlow className="border-t border-paper/25 pt-5 rounded-xl">
-                <p className="font-serif text-4xl md:text-6xl font-light mb-2">
+              <ModularReveal delay={2} enableMouseGlow className="border-t border-paper/25 pt-4 sm:pt-5 rounded-xl">
+                <p className="font-serif text-3xl sm:text-4xl md:text-6xl font-light mb-1.5 sm:mb-2">
                   <AnimatedCounter target={650} prefix="+" duration={1400} />
                 </p>
-                <p className="eyebrow text-paper/75">IMPLANTES POR ANO</p>
+                <p className="eyebrow !text-[10px] sm:!text-[11.5px] !tracking-[0.14em] sm:!tracking-[0.22em] text-paper/75">
+                  IMPLANTES POR ANO
+                </p>
               </ModularReveal>
-              <ModularReveal delay={3} enableMouseGlow className="border-t border-paper/25 pt-5 rounded-xl">
-                <p className="font-serif text-4xl md:text-6xl font-light mb-2">
+              <ModularReveal delay={3} enableMouseGlow className="border-t border-paper/25 pt-4 sm:pt-5 rounded-xl">
+                <p className="font-serif text-3xl sm:text-4xl md:text-6xl font-light mb-1.5 sm:mb-2">
                   <AnimatedCounter target={4.4} decimals={1} decimalSeparator="," duration={1400} />
                 </p>
-                <p className="eyebrow text-paper/75">AVALIAÇÃO GOOGLE</p>
+                <p className="eyebrow !text-[10px] sm:!text-[11.5px] !tracking-[0.14em] sm:!tracking-[0.22em] text-paper/75">
+                  AVALIAÇÃO GOOGLE
+                </p>
               </ModularReveal>
-              <ModularReveal delay={4} enableMouseGlow className="border-t border-paper/25 pt-5 rounded-xl">
-                <p className="font-serif text-4xl md:text-6xl font-light mb-2">
+              <ModularReveal delay={4} enableMouseGlow className="border-t border-paper/25 pt-4 sm:pt-5 rounded-xl">
+                <p className="font-serif text-3xl sm:text-4xl md:text-6xl font-light mb-1.5 sm:mb-2">
                   <AnimatedCounter target={8} duration={1200} />
                 </p>
-                <p className="eyebrow text-paper/75">ESPECIALISTAS</p>
+                <p className="eyebrow !text-[10px] sm:!text-[11.5px] !tracking-[0.14em] sm:!tracking-[0.22em] text-paper/75">
+                  ESPECIALISTAS
+                </p>
               </ModularReveal>
             </div>
           </div>
@@ -953,24 +1055,160 @@ export default function App() {
       </section>
 
       {/* =====================================================
-           4. TRATAMENTOS (CINTA EN ESCALERA + PANEL STICKY)
+           4. TRATAMENTOS (CARRUSEL REEL 9:16 MÓVIL + CINTA EN ESCALERA ESCRITORIO)
            ===================================================== */}
-      <section id="tratamentos" className="py-28 md:py-44 bg-paper">
+      <section id="tratamentos" className="py-20 sm:py-28 md:py-44 bg-paper">
         <div className="container-page">
           <ModularReveal>
             <p className="eyebrow text-muted mb-4">TRATAMENTOS</p>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 md:mb-20">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-16 md:mb-20">
               <h2 className="section-heading">
                 Cuidados pensados <em>ao<br />detalhe.</em>
               </h2>
-              <p className="text-[13.5px] text-muted max-w-sm leading-relaxed">
-                Passe o cursor sobre os tratamentos para consultar as especificações clínicas e a tecnologia aplicada.
+              <p className="text-[13px] sm:text-[13.5px] text-muted max-w-sm leading-relaxed">
+                <span className="lg:hidden">
+                  Deslize para os lados para explorar as especialidades clínicas, detalhes e tabela de preços.
+                </span>
+                <span className="hidden lg:inline">
+                  Passe o cursor sobre os tratamentos para consultar as especificações clínicas e a tecnologia aplicada.
+                </span>
               </p>
             </div>
           </ModularReveal>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-            {/* Lista de tratamentos (Lado esquerdo) - Cinta en escalera reactiva al scroll con barras animadas */}
+          {/* VISTA MÓVIL / TABLET (< lg): Carrusel horizontal de tarjetas formato Reel 9:16 completo sin recortes */}
+          <div className="lg:hidden">
+            <div
+              ref={treatmentCarouselRef}
+              onScroll={handleMobileTreatmentScroll}
+              className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory -mx-6 px-6 pb-3"
+            >
+              {TREATMENTS.map((t, index) => {
+                const isCurrent = mobileTreatmentIdx === index;
+                return (
+                  <div
+                    key={t.id}
+                    data-treatment-card-idx={index}
+                    className="w-[74vw] max-w-[290px] sm:w-[305px] shrink-0 snap-center"
+                  >
+                    <LiquidCard className="liquid-card-light p-3 rounded-[28px] h-full flex flex-col">
+                      {/* Imagen en proporción exacta Reel 9:16 vertical sin recortes */}
+                      <div className="aspect-[9/16] w-full overflow-hidden rounded-[20px] bg-stone relative shadow-sm">
+                        <img
+                          src={t.img}
+                          alt={t.title}
+                          loading={index < 2 ? 'eager' : 'lazy'}
+                          className="w-full h-full object-cover object-center block"
+                        />
+                      </div>
+
+                      {/* Pie de la tarjeta con barra delgada animada, título, resumen y botones */}
+                      <div className="pt-3.5 px-1 pb-0.5 flex-1 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center gap-2.5 mb-1.5">
+                            <span
+                              aria-hidden="true"
+                              style={{
+                                ['--line-delay' as string]: `${index * 0.22}s`,
+                              } as React.CSSProperties}
+                              className={`treatment-scroll-line ${isCurrent ? 'is-active' : ''}`}
+                            />
+                            <span className="text-xs font-serif tracking-wider text-ink font-semibold">
+                              {t.number}
+                            </span>
+                            <span className="text-[10.5px] text-muted ml-auto font-mono">
+                              {t.number} / 09
+                            </span>
+                          </div>
+                          <h3 className="font-serif text-[1.28rem] leading-snug text-ink font-normal">
+                            {t.title}
+                          </h3>
+                          <p className="text-xs text-muted leading-relaxed mt-1 line-clamp-2">
+                            {t.caption}
+                          </p>
+                        </div>
+
+                        <div className="mt-3.5 pt-3 border-t border-rule flex items-center justify-between gap-2">
+                          <LiquidButton
+                            type="button"
+                            variant="secondary"
+                            onClick={() => {
+                              setPriceModalTreatmentId(t.id);
+                              setIsPriceModalOpen(true);
+                            }}
+                            className="!px-3.5 !py-2 !text-xs !font-semibold !text-ink shrink-0 cursor-pointer"
+                          >
+                            <span>Preços</span>
+                          </LiquidButton>
+                          <LiquidButton
+                            type="button"
+                            variant="primary"
+                            onClick={() => handleOpenChatbot(t.title)}
+                            className="!px-4 !py-2 !text-xs !font-semibold shadow-sm flex-1 flex items-center justify-center cursor-pointer"
+                          >
+                            <span>Marcar consulta</span>
+                          </LiquidButton>
+                        </div>
+                      </div>
+                    </LiquidCard>
+                  </div>
+                );
+              })}
+              <div className="w-2 shrink-0" aria-hidden="true" />
+            </div>
+
+            {/* Indicador de progreso y controles laterales del carrusel móvil */}
+            <div className="mt-5 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 flex-1 max-w-[210px]">
+                <span className="font-serif text-xs text-ink font-semibold shrink-0">
+                  {String(mobileTreatmentIdx + 1).padStart(2, '0')}{' '}
+                  <span className="text-muted font-normal">
+                    / {String(TREATMENTS.length).padStart(2, '0')}
+                  </span>
+                </span>
+                <div className="flex-1 h-[2px] bg-ink/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-clinic-navy rounded-full transition-all duration-300 ease-out"
+                    style={{
+                      width: `${((mobileTreatmentIdx + 1) / TREATMENTS.length) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <LiquidButton
+                  type="button"
+                  variant="secondary"
+                  onClick={() => scrollMobileTreatment(-1)}
+                  disabled={mobileTreatmentIdx === 0}
+                  aria-label="Tratamento anterior"
+                  className={`!w-10 !h-10 !p-0 !rounded-full flex items-center justify-center text-ink ${
+                    mobileTreatmentIdx === 0 ? 'opacity-35 cursor-not-allowed' : 'cursor-pointer'
+                  }`}
+                >
+                  ←
+                </LiquidButton>
+                <LiquidButton
+                  type="button"
+                  variant="secondary"
+                  onClick={() => scrollMobileTreatment(1)}
+                  disabled={mobileTreatmentIdx === TREATMENTS.length - 1}
+                  aria-label="Seguinte tratamento"
+                  className={`!w-10 !h-10 !p-0 !rounded-full flex items-center justify-center text-ink ${
+                    mobileTreatmentIdx === TREATMENTS.length - 1
+                      ? 'opacity-35 cursor-not-allowed'
+                      : 'cursor-pointer'
+                  }`}
+                >
+                  →
+                </LiquidButton>
+              </div>
+            </div>
+          </div>
+
+          {/* VISTA ESCRITORIO (lg+): Cinta en escalera + Panel sticky */}
+          <div className="hidden lg:grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
             <div className="lg:col-span-7 border-t border-rule">
               {TREATMENTS.map((t, index) => {
                 const isActive = activeTreatment.id === t.id;
@@ -991,7 +1229,6 @@ export default function App() {
               })}
             </div>
 
-            {/* Painel do lado direito: imagem e explicação com LiquidCard */}
             <div className="lg:col-span-5 lg:sticky lg:top-28">
               <ModularReveal delay={2} enableMouseGlow>
                 <LiquidCard className="liquid-card-light p-4 sm:p-5 rounded-3xl">
@@ -1255,64 +1492,41 @@ export default function App() {
       </section>
 
       {/* =====================================================
-           7. A CLÍNICA — MÓVIL TÁCTIL NATIVO + ESCRITORIO STICKY
+           7. A CLÍNICA — STICKY HORIZONTAL SCROLL (MÓVIL Y ESCRITORIO)
            ===================================================== */}
       <section id="clinica" className="relative bg-stone">
-        {/* VISTA MÓVIL (< md): Deslizamiento táctil horizontal fluido con el dedo */}
-        <div className="md:hidden py-16">
-          <div className="container-page mb-6">
-            <div className="flex items-center gap-3 mb-2">
-              <p className="eyebrow text-muted">A CLÍNICA</p>
-              <span className="text-[11px] text-muted/70 tracking-widest font-mono">· 09 ESPAÇOS</span>
-            </div>
-            <h2 className="section-heading text-3xl sm:text-4xl">
-              Um espaço feito para <em>abrandar.</em>
-            </h2>
-            <p className="text-xs text-muted mt-2 flex items-center gap-1.5">
-              <span>Deslize com o dedo para explorar</span>
-              <span className="text-clinic-navy font-semibold">→</span>
-            </p>
-          </div>
-
-          <div className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory px-4 pb-2">
-            {CLINICA_SPACES.map((space) => (
-              <div
-                key={space.num}
-                className="w-[84vw] max-w-[340px] shrink-0 snap-start"
-              >
-                <div className="aspect-video w-full relative mb-2.5 bg-[#1e222a] overflow-hidden rounded-2xl shadow-sm">
-                  <img
-                    className="w-full h-full object-cover object-center block"
-                    src={space.src}
-                    alt={`${space.num} ${space.title}`}
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-40 pointer-events-none" />
-                </div>
-                <div>
-                  <p className="text-[13px] text-ink font-medium tracking-tight">
-                    <span className="font-serif text-sm mr-1.5 text-ink/80">{space.num}</span> {space.title}
-                  </p>
-                  <p className="text-[11.5px] text-muted mt-0.5 leading-snug">{space.subtitle}</p>
-                </div>
-              </div>
-            ))}
-            <div className="w-4 shrink-0" aria-hidden="true" />
-          </div>
-        </div>
-
-        {/* VISTA ESCRITORIO (>= md): Scroll horizontal cinematográfico 500vh */}
-        <div className="hidden md:block md:h-[500vh]">
-          <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center py-6 md:py-10">
-            <div className="container-page mb-6 md:mb-8 flex items-end justify-between gap-6 shrink-0">
+        <div className="h-[440vh] md:h-[500vh] relative">
+          <div
+            ref={clinicaStickyRef}
+            className="sticky top-0 h-viewport-s md:h-screen w-full overflow-hidden flex flex-col justify-center py-6 md:py-10"
+          >
+            <div className="container-page mb-5 sm:mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 shrink-0">
               <div>
-                <div className="flex items-center gap-3 mb-2.5">
+                <div className="flex items-center gap-3 mb-2 sm:mb-2.5">
                   <p className="eyebrow text-muted">A CLÍNICA</p>
                   <span className="text-[11px] text-muted/70 tracking-widest font-mono">· 09 ESPAÇOS</span>
                 </div>
-                <h2 className="section-heading">
+                <h2 className="section-heading text-3xl sm:text-4xl md:text-[clamp(2.4rem,4.5vw,4.2rem)]">
                   Um espaço feito para <em>abrandar.</em>
                 </h2>
+              </div>
+
+              {/* Indicador de progreso del recorrido horizontal (01 / 09 -> 09 / 09) */}
+              <div className="flex items-center gap-3 w-full sm:w-auto max-w-[220px]">
+                <span className="font-serif text-xs text-ink font-semibold shrink-0">
+                  {String(
+                    Math.min(CLINICA_SPACES.length, Math.floor(clinicaProgress * CLINICA_SPACES.length) + 1)
+                  ).padStart(2, '0')}{' '}
+                  <span className="text-muted font-normal">
+                    / {String(CLINICA_SPACES.length).padStart(2, '0')}
+                  </span>
+                </span>
+                <div className="flex-1 sm:w-28 h-[2px] bg-ink/15 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-clinic-navy rounded-full transition-all duration-150 ease-out"
+                    style={{ width: `${Math.max(8, clinicaProgress * 100)}%` }}
+                  />
+                </div>
               </div>
             </div>
 
@@ -1321,15 +1535,15 @@ export default function App() {
                 ref={clinicaTrackRef}
                 id="clinica-horizontal-track"
                 style={{ transform: clinicaTrackTransform }}
-                className="flex items-end gap-6 md:gap-8 px-[clamp(1.25rem,4vw,3.5rem)] w-max will-change-transform"
+                className="flex items-start sm:items-end gap-4 sm:gap-6 md:gap-8 px-6 sm:px-[clamp(1.25rem,4vw,3.5rem)] w-max will-change-transform"
               >
                 {CLINICA_SPACES.map((space) => (
                   <div
                     key={space.num}
-                    className="group w-[85vw] sm:w-[540px] md:w-[620px] lg:w-[680px] shrink-0 cursor-pointer"
+                    className="group w-[84vw] sm:w-[540px] md:w-[620px] lg:w-[680px] shrink-0 cursor-pointer"
                   >
                     {/* Cajón con proporción exacta 16:9 completa */}
-                    <div className="clinica-photo-frame aspect-video w-full relative mb-3 bg-[#1e222a] overflow-hidden rounded-2xl">
+                    <div className="clinica-photo-frame aspect-video w-full relative mb-2.5 sm:mb-3 bg-[#1e222a] overflow-hidden rounded-2xl shadow-sm">
                       <img
                         className="clinica-editorial-img w-full h-full object-cover object-center block group-hover:scale-[1.025] transition-transform duration-700 ease-out"
                         src={space.src}
@@ -1339,19 +1553,19 @@ export default function App() {
                       {/* Sutil viñeta elegante */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-40 group-hover:opacity-15 transition-opacity duration-500 pointer-events-none" />
                     </div>
-                    <div className="pt-1.5">
+                    <div className="pt-1 sm:pt-1.5">
                       <div className="flex items-baseline justify-between gap-3">
                         <p className="text-[13px] text-ink font-medium tracking-tight">
                           <span className="font-serif text-sm mr-2 text-ink/80">{space.num}</span> {space.title}
                         </p>
                         <span className="text-[11px] text-muted hidden md:inline shrink-0">{space.subtitle}</span>
                       </div>
-                      <p className="text-[11.5px] text-muted md:hidden mt-0.5">{space.subtitle}</p>
+                      <p className="text-[11.5px] text-muted md:hidden mt-0.5 leading-snug">{space.subtitle}</p>
                     </div>
                   </div>
                 ))}
-                {/* Espaciador final para desahogo de scroll sin reducir el tamaño de la tarjeta 9 */}
-                <div className="w-12 sm:w-20 md:w-32 shrink-0" aria-hidden="true" />
+                {/* Espaciador final para que la tarjeta 09 quede completamente visible antes de continuar bajando */}
+                <div className="w-8 sm:w-20 md:w-32 shrink-0" aria-hidden="true" />
               </div>
             </div>
           </div>
@@ -1804,7 +2018,7 @@ export default function App() {
       {/* =====================================================
            12. FOOTER + BARRA LEGAL PORTUGAL
            ===================================================== */}
-      <footer className="pt-20 pb-24 md:pb-12 bg-stone/60 border-t border-rule">
+      <footer className="pt-16 sm:pt-20 pb-20 md:pb-12 bg-stone/60 border-t border-rule">
         <div className="container-page">
           <ModularReveal>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-20">
@@ -1955,10 +2169,6 @@ export default function App() {
           }
         }}
       />
-
-      {/* Barra de contacto rápido para el pulgar en móviles */}
-      <MobileQuickBar />
-
     </div>
   );
 }
