@@ -3,36 +3,41 @@
 @theme {
   --font-serif: "Playfair Display", ui-serif, Georgia, serif;
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Open Sans", sans-serif;
+  --font-body: "Poppins", ui-sans-serif, system-ui, sans-serif;
 
   --color-clinic-navy: #2d3277;
+  --color-clinic-blue: #2d3277;
   --color-clinic-lime: #d4e157;
   --color-clinic-lavender: #9c8cc4;
+  --color-clinic-purple: #9c8cc4;
   --color-clinic-white: #ffffff;
   --color-clinic-black: #000000;
   --color-clinic-paper: #faf9f6;
 
-  --color-ink: #2d3277;
+  --color-ink: #1e2258;
   --color-paper: #faf9f6;
-  --color-stone: #f2f0f8;
-  --color-rule: rgba(45, 50, 119, 0.12);
+  --color-stone: #f2efe9;
+  --color-muted: #4b5079;
+  --color-mutedInk: #ccd0e5;
+  --color-rule: rgba(30, 34, 88, 0.13);
   --color-ruleDark: rgba(255, 255, 255, 0.18);
 
-  --animate-fade-in-up: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-fade-in-up: fadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-fade-in: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-float: float 8s ease-in-out infinite;
 
   @keyframes fadeInUp {
-    0% { opacity: 0; transform: translateY(24px); }
+    0% { opacity: 0; transform: translateY(18px); }
     100% { opacity: 1; transform: translateY(0); }
   }
   @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
+    50% { transform: translateY(-10px); }
   }
 }
 
 :root {
-  --ink: #2d3277;
+  --ink: #1e2258;
   --paper: #faf9f6;
   --clinic-navy: #2d3277;
   --clinic-lime: #d4e157;
@@ -41,7 +46,7 @@
   --clinic-black: #000000;
 
   /* ==========================================================================
-     APPLE iOS 27 LIQUID GLASS DESIGN SYSTEM
+     APPLE iOS 27 LIQUID GLASS TOKENS
      ========================================================================== */
   --spring-easing: cubic-bezier(0.22, 1, 0.36, 1);
   --glass-blur: blur(28px) saturate(190%) brightness(1.06);
@@ -88,8 +93,14 @@ body {
 }
 
 /* Custom editorial layout classes */
-.h-viewport-l { height: 100lvh; }
-.h-viewport-s { height: 100svh; }
+.h-viewport-l {
+  height: 100svh;
+  height: 100dvh;
+}
+.h-viewport-s {
+  height: 100svh;
+  height: 100dvh;
+}
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -104,14 +115,14 @@ body {
   max-width: 1360px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: clamp(1.5rem, 5vw, 4rem);
-  padding-right: clamp(1.5rem, 5vw, 4rem);
+  padding-left: clamp(1rem, 4.5vw, 4rem);
+  padding-right: clamp(1rem, 4.5vw, 4rem);
 }
 
 .display {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 400;
-  line-height: 1.02;
+  line-height: 1.06;
   letter-spacing: -0.025em;
   text-wrap: balance;
 }
@@ -129,8 +140,8 @@ body {
 .section-heading {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 500;
-  font-size: clamp(2.4rem, 4.5vw, 4.2rem);
-  line-height: 1.05;
+  font-size: clamp(2.15rem, 4.1vw, 3.85rem);
+  line-height: 1.1;
   letter-spacing: -0.02em;
   color: inherit;
   text-wrap: balance;
@@ -144,7 +155,7 @@ body {
 
 .eyebrow {
   font-size: 0.72rem;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
@@ -248,53 +259,6 @@ body {
   }
 }
 
-/* Optical Focus Transition (Medical Precision & Calm) */
-.optical-focus-in {
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Clinical Phase Indicator */
-.clinical-phase-pill {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.clinical-phase-pill.active {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.6);
-}
-
-/* Treatment Active Rail */
-.treatment-active-rail {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 100%;
-  background: linear-gradient(90deg, rgba(156, 140, 196, 0.12) 0%, rgba(212, 225, 87, 0.05) 50%, transparent 100%);
-  border-left: 2px solid #2d3277;
-  border-radius: 0.75rem;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  pointer-events: none;
-}
-
-/* Clinical Pathway Node */
-.clinical-pathway-node {
-  position: relative;
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.clinical-pathway-node.active::after {
-  content: "";
-  position: absolute;
-  inset: -6px;
-  border-radius: 9999px;
-  border: 1px solid rgba(156, 140, 196, 0.5);
-  animation: clinicalNodePulse 3s ease-in-out infinite;
-}
-
-@keyframes clinicalNodePulse {
-  0%, 100% { transform: scale(1); opacity: 0.4; }
-  50% { transform: scale(1.15); opacity: 0.8; }
-}
-
 /* Reference link-underline animated expansion */
 .link-underline {
   background: linear-gradient(currentColor, currentColor) 0 100% / 0% 1px no-repeat;
@@ -308,53 +272,22 @@ body {
   background-size: 100% 1px;
 }
 
-/* Reference fadeUp animation */
-@keyframes fadeUp {
-  0% {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-up {
-  animation: fadeUp 0.7s var(--ease) forwards;
-}
-
-/* Button arrow hover motion */
-.btn-arrow-slide {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-arrow-slide .arrow-icon {
-  display: inline-block;
-  transition: transform 0.35s var(--ease);
-}
-
-.btn-arrow-slide:hover .arrow-icon {
-  transform: translateX(4px);
-}
-
 .treatment-item .treatment-title {
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease;
+  color: rgba(30, 34, 88, 0.46);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease;
 }
 
 .treatment-item.active .treatment-title,
 .treatment-item:hover .treatment-title {
-  transform: translateX(12px);
+  transform: translateX(14px);
   font-style: italic;
-  color: #2d3277;
+  color: var(--ink);
 }
 
 .treatment-item .treatment-cta {
-  opacity: 0;
-  transform: translateX(-8px);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.35;
+  transform: translateX(-4px);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
 }
 
 .treatment-item.active .treatment-cta,
@@ -395,94 +328,6 @@ body {
   padding: 8px 12px;
 }
 
-/* Elegant Soft Glow Rings */
-.chatbot-glow-ring-container,
-.whatsapp-glow-ring-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.chatbot-glow-ring-container:hover,
-.whatsapp-glow-ring-container:hover {
-  transform: scale(1.08);
-}
-
-.chatbot-glow-ring-blur {
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    #2d3277,
-    #d4e157,
-    #9c8cc4,
-    #25D366,
-    #2d3277
-  );
-  animation: ringSpin 6s linear infinite;
-  filter: blur(5px);
-  opacity: 0.85;
-  z-index: 0;
-}
-
-.chatbot-glow-ring-sharp {
-  position: absolute;
-  inset: -2px;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    #2d3277,
-    #d4e157,
-    #9c8cc4,
-    #25D366,
-    #2d3277
-  );
-  animation: ringSpin 6s linear infinite;
-  z-index: 1;
-}
-
-.whatsapp-glow-ring-blur {
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    #25D366,
-    #d4e157,
-    #10b981,
-    #2d3277,
-    #25D366
-  );
-  animation: ringSpin 6s linear infinite;
-  filter: blur(5px);
-  opacity: 0.8;
-  z-index: 0;
-}
-
-.whatsapp-glow-ring-sharp {
-  position: absolute;
-  inset: -2px;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    #25D366,
-    #d4e157,
-    #10b981,
-    #2d3277,
-    #25D366
-  );
-  animation: ringSpin 6s linear infinite;
-  z-index: 1;
-}
-
-@keyframes ringSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 /* =====================================================
    APPLE iOS 27 LIQUID GLASS DESIGN SYSTEM
    ===================================================== */
@@ -515,8 +360,9 @@ body {
 .liquid-btn::before,
 .liquid-btn-primary::before,
 .liquid-btn-lime::before,
-.liquid-pill::before,
-.liquid-glass-badge::before {
+.liquid-glass-widget::before,
+.liquid-glass-panel::before,
+.liquid-glass-pill::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -534,6 +380,54 @@ body {
   mask-composite: exclude;
   pointer-events: none;
   z-index: 2;
+}
+
+/* --- WIDGETS Y CÁPSULAS LIQUID GLASS (Idéntico color, transparencia y refracción que los botones) --- */
+.liquid-glass-widget {
+  position: relative;
+  background: var(--glass-bg-primary);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    0 24px 56px -10px rgba(0, 122, 255, 0.36),
+    0 6px 18px -2px rgba(0, 0, 0, 0.22),
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1.5px 2px 0 rgba(0, 60, 160, 0.4),
+    inset 0 0 24px 0 rgba(255, 255, 255, 0.28);
+}
+
+.liquid-glass-panel {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 122, 255, 0.56) 0%,
+    rgba(10, 132, 255, 0.34) 52%,
+    rgba(94, 92, 230, 0.50) 100%
+  );
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    0 14px 34px -6px rgba(0, 60, 160, 0.42),
+    0 4px 12px -2px rgba(0, 0, 0, 0.24),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1.5px 2px 0 rgba(0, 60, 160, 0.38),
+    inset 0 0 18px 0 rgba(255, 255, 255, 0.25);
+}
+
+.liquid-glass-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: var(--glass-bg-primary);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    0 8px 20px -4px rgba(0, 122, 255, 0.42),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.82),
+    inset 0 -1px 1.5px 0 rgba(0, 60, 160, 0.35),
+    inset 0 0 12px 0 rgba(255, 255, 255, 0.24);
 }
 
 /* Reflejo superior líquido */
@@ -557,17 +451,19 @@ body {
 .liquid-card-light {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.82) 0%,
-    rgba(255, 255, 255, 0.62) 50%,
-    rgba(255, 255, 255, 0.75) 100%
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(255, 255, 255, 0.32) 50%,
+    rgba(255, 255, 255, 0.48) 100%
   );
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   box-shadow: 
-    0 16px 36px -8px rgba(45, 50, 119, 0.10),
-    0 4px 12px -2px rgba(45, 50, 119, 0.04),
-    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 1.5px 0 rgba(45, 50, 119, 0.06),
-    inset 0 0 20px 0 rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+    0 20px 48px -10px rgba(45, 50, 119, 0.12),
+    0 4px 16px -2px rgba(45, 50, 119, 0.05),
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 2px 0 rgba(45, 50, 119, 0.08),
+    inset 0 0 24px 0 rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.65);
 }
 
 /* Contenedor adaptado para fondos oscuros */
@@ -582,12 +478,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.22);
 }
 
-/* Alias de compatibilidad */
-.liquid-glass-card {
-  composes: liquid-card;
-}
-
-/* --- BOTONES LIQUID GLASS (Secundario / Cristal Puro) --- */
+/* --- BOTONES SECUNDARIOS LIQUID GLASS (Cristal Puro iOS 27) --- */
 .liquid-btn {
   position: relative;
   display: inline-flex;
@@ -601,14 +492,14 @@ body {
   background: var(--glass-bg-base);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-shadow-sm);
+  box-shadow: var(--glass-shadow-sm) !important;
   border: none;
   cursor: pointer;
   overflow: hidden;
   user-select: none;
   text-decoration: none;
   color: inherit;
-  transition: 
+  transition:
     transform 0.4s var(--spring-easing),
     box-shadow 0.4s var(--spring-easing),
     background 0.3s ease,
@@ -618,11 +509,11 @@ body {
 .liquid-btn:hover {
   transform: translateY(-2px) scale(1.025);
   filter: brightness(1.08);
-  box-shadow: 
+  box-shadow:
     0 14px 30px -4px rgba(0, 0, 0, 0.28),
     inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.9),
     inset 0 -1px 2px 0 rgba(255, 255, 255, 0.3),
-    inset 0 0 18px 0 rgba(255, 255, 255, 0.22);
+    inset 0 0 18px 0 rgba(255, 255, 255, 0.22) !important;
 }
 
 .liquid-btn:active {
@@ -631,7 +522,14 @@ body {
   transition-duration: 0.15s;
 }
 
-/* --- BOTÓN PRIMARIO LIQUID GLASS (Cristal Tintado iOS 27) --- */
+.liquid-btn:focus-visible,
+.liquid-btn-primary:focus-visible,
+.liquid-btn-lime:focus-visible {
+  outline: 2px solid #d4e157;
+  outline-offset: 2px;
+}
+
+/* --- BOTÓN PRIMARIO LIQUID GLASS (Cristal Azul / Índigo Luminoso iOS 27) --- */
 .liquid-btn-primary {
   position: relative;
   display: inline-flex;
@@ -646,18 +544,18 @@ body {
   background: var(--glass-bg-primary);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: 
+  box-shadow:
     0 10px 28px -4px rgba(0, 122, 255, 0.45),
     0 2px 8px -1px rgba(0, 0, 0, 0.2),
     inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.8),
     inset 0 -1.5px 2px 0 rgba(0, 60, 160, 0.4),
-    inset 0 0 16px 0 rgba(255, 255, 255, 0.25);
+    inset 0 0 16px 0 rgba(255, 255, 255, 0.25) !important;
   border: none;
   cursor: pointer;
   overflow: hidden;
   user-select: none;
   text-decoration: none;
-  transition: 
+  transition:
     transform 0.4s var(--spring-easing),
     box-shadow 0.4s var(--spring-easing),
     filter 0.3s ease;
@@ -666,10 +564,10 @@ body {
 .liquid-btn-primary:hover {
   transform: translateY(-2px) scale(1.025);
   filter: brightness(1.1);
-  box-shadow: 
+  box-shadow:
     0 16px 36px -4px rgba(0, 122, 255, 0.6),
     inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
-    inset 0 0 22px 0 rgba(255, 255, 255, 0.35);
+    inset 0 0 22px 0 rgba(255, 255, 255, 0.35) !important;
 }
 
 .liquid-btn-primary:active {
@@ -677,7 +575,7 @@ body {
   transition-duration: 0.15s;
 }
 
-/* --- BOTÓN VERDE LIMA DE LA CLÍNICA (WhatsApp & Acentos) --- */
+/* --- BOTÓN WHATSAPP / LIMA LIQUID GLASS (Cristal Lima Luminoso iOS 27) --- */
 .liquid-btn-lime {
   position: relative;
   display: inline-flex;
@@ -697,18 +595,18 @@ body {
   ) !important;
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: 
+  box-shadow:
     0 10px 28px -4px rgba(212, 225, 87, 0.5),
     0 2px 8px -1px rgba(0, 0, 0, 0.12),
     inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
     inset 0 -1.5px 2px 0 rgba(140, 155, 30, 0.45),
-    inset 0 0 16px 0 rgba(255, 255, 255, 0.35);
+    inset 0 0 16px 0 rgba(255, 255, 255, 0.35) !important;
   border: none;
   cursor: pointer;
   overflow: hidden;
   user-select: none;
   text-decoration: none;
-  transition: 
+  transition:
     transform 0.4s var(--spring-easing),
     box-shadow 0.4s var(--spring-easing),
     filter 0.3s ease;
@@ -717,105 +615,15 @@ body {
 .liquid-btn-lime:hover {
   transform: translateY(-2px) scale(1.025);
   filter: brightness(1.06);
-  box-shadow: 
+  box-shadow:
     0 16px 36px -4px rgba(212, 225, 87, 0.65),
     inset 0 1.5px 2px 0 rgba(255, 255, 255, 1),
-    inset 0 0 22px 0 rgba(255, 255, 255, 0.5);
+    inset 0 0 22px 0 rgba(255, 255, 255, 0.5) !important;
 }
 
 .liquid-btn-lime:active {
   transform: translateY(0px) scale(0.96);
   transition-duration: 0.15s;
-}
-
-/* Botón primario institucional de la clínica (Royal Navy + Violet + Lime) */
-.liquid-btn-clinic {
-  background: linear-gradient(
-    135deg,
-    rgba(45, 50, 119, 0.92) 0%,
-    rgba(25, 28, 72, 0.85) 52%,
-    rgba(156, 140, 196, 0.75) 100%
-  ) !important;
-  box-shadow: 
-    0 10px 28px -4px rgba(45, 50, 119, 0.45),
-    0 2px 8px -1px rgba(0, 0, 0, 0.2),
-    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1.5px 2px 0 rgba(10, 15, 50, 0.5),
-    inset 0 0 16px 0 rgba(212, 225, 87, 0.25) !important;
-}
-
-.liquid-btn-clinic:hover {
-  box-shadow: 
-    0 16px 36px -4px rgba(45, 50, 119, 0.65),
-    0 4px 14px -1px rgba(212, 225, 87, 0.35),
-    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
-    inset 0 0 22px 0 rgba(212, 225, 87, 0.35) !important;
-}
-
-/* --- BADGES, PILLS & CONTROLES SEGMENTADOS --- */
-.liquid-pill,
-.liquid-glass-badge {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.35rem 0.9rem;
-  border-radius: 9999px;
-  font-size: 0.825rem;
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.12),
-    inset 0 1px 1px rgba(255, 255, 255, 0.65);
-  transition: transform 0.3s var(--spring-easing), background 0.3s ease;
-}
-
-.liquid-pill:hover,
-.liquid-glass-badge:hover {
-  transform: translateY(-1px) scale(1.02);
-  background: rgba(255, 255, 255, 0.28);
-}
-
-/* Glass Input Focus Effect */
-.glass-input {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
-  transition: all 0.3s ease;
-}
-
-.glass-input:focus {
-  background: rgba(255, 255, 255, 0.15);
-  border-bottom-color: #d4e157;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 4px 12px rgba(212, 225, 87, 0.2);
-}
-
-/* Ambient Liquid Glass Orbs */
-.liquid-orb-lime {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(212, 225, 87, 0.28) 0%, rgba(212, 225, 87, 0) 70%);
-  filter: blur(40px);
-  pointer-events: none;
-}
-
-.liquid-orb-lavender {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(156, 140, 196, 0.28) 0%, rgba(156, 140, 196, 0) 70%);
-  filter: blur(40px);
-  pointer-events: none;
-}
-
-.liquid-orb-navy {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(45, 50, 119, 0.25) 0%, rgba(45, 50, 119, 0) 70%);
-  filter: blur(45px);
-  pointer-events: none;
 }
 
 /* First-Class Architectural & Clinic Photography Filter */
@@ -831,15 +639,19 @@ body {
 .clinica-photo-frame {
   position: relative;
   overflow: hidden;
-  border-radius: 1.125rem;
+  border-radius: 1rem;
   background-color: #faf9f6;
-  border: 1px solid rgba(45, 50, 119, 0.08);
-  box-shadow: 0 14px 34px -8px rgba(45, 50, 119, 0.09), 0 4px 12px 0 rgba(0, 0, 0, 0.02);
-  transition: box-shadow 0.5s var(--ease), transform 0.5s var(--ease);
+  border: 1px solid rgba(30, 34, 88, 0.09);
+  box-shadow:
+    0 2px 6px rgba(24, 28, 74, 0.05),
+    0 14px 34px -8px rgba(24, 28, 74, 0.11);
+  transition: box-shadow 0.25s var(--ease), transform 0.25s var(--ease);
 }
 
 .clinica-photo-frame:hover {
-  box-shadow: 0 22px 50px -12px rgba(45, 50, 119, 0.18), 0 6px 18px 0 rgba(212, 225, 87, 0.18);
+  box-shadow:
+    0 4px 10px rgba(24, 28, 74, 0.08),
+    0 20px 44px -10px rgba(24, 28, 74, 0.18);
   transform: translateY(-2px);
 }
 
@@ -917,88 +729,38 @@ body {
 }
 
 /* ==========================================================================
-   CINTA EN ESCALERA (STAIRCASE CONVEYOR RIBBON) — TRATAMENTOS
+   RESPONSIVE ADAPTATION: MOBILE LANDSCAPE & COMPACT TABLET HEIGHTS
    ========================================================================== */
-.treatment-ribbon-wrapper {
-  overflow: visible;
-  position: relative;
-}
+@media (max-height: 540px) and (max-width: 960px) and (orientation: landscape) {
+  #site-header {
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+  }
 
-.treatment-ribbon-step {
-  position: relative;
-  opacity: 0;
-  transform: translate3d(-64px, 4px, 0);
-  filter: blur(8px);
-  will-change: transform, opacity, filter;
-  transition:
-    transform 0.78s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 0.3s ease;
-}
+  #hero-beat-1,
+  #hero-beat-2 {
+    bottom: 17% !important;
+  }
 
-@media (min-width: 768px) {
-  .treatment-ribbon-step {
-    transform: translate3d(-88px, 6px, 0);
+  #hero-beat-3 {
+    bottom: 14% !important;
+  }
+
+  #hero-beat-1 .hero-type,
+  #hero-beat-2 .hero-type,
+  #hero-beat-3 .hero-type {
+    font-size: clamp(2rem, 5.15vw, 3.25rem) !important;
+    line-height: 1.04 !important;
+    max-width: 22ch !important;
+  }
+
+  #hero-beat-3 .hero-type {
+    margin-bottom: 0.65rem !important;
+  }
+
+  #clinica .clinica-photo-frame {
+    max-height: 44dvh !important;
   }
 }
 
-/* Estado activo / revelado de la cinta en escalera */
-.treatment-ribbon-step.is-stepped-in {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  filter: blur(0);
-}
-
-/* Línea de pista de la cinta que se extiende de izquierda a derecha al entrar */
-.treatment-ribbon-track {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 1px;
-  width: 100%;
-  background: var(--color-rule);
-  transform: scaleX(0);
-  transform-origin: left center;
-  pointer-events: none;
-  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.treatment-ribbon-step.is-stepped-in .treatment-ribbon-track {
-  transform: scaleX(1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .treatment-ribbon-step {
-    transform: none !important;
-    filter: none !important;
-    transition: opacity 0.3s ease !important;
-  }
-  .treatment-ribbon-track {
-    transform: none !important;
-  }
-}
-
-/* ==========================================================================
-   PROCESS CARDS — STACKING CARDS WITH SCALE & ROTATION (ROLL OUT STUDIOS REF)
-   ========================================================================== */
-.process-cards {
-  position: relative;
-  width: 100%;
-}
-
-.process-card-slot {
-  position: relative;
-  width: 100%;
-}
-
-.process-card {
-  will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .process-card {
-    transform: none !important;
-  }
-}
 

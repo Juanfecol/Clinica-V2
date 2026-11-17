@@ -1,0 +1,41 @@
+# robots.txt — Clínica Santa Maria dos Olivais (Lisboa · Moscavide / Olivais)
+# Optimizado para Motores de Busca e Motores de Inteligência Artificial (GEO / AISO)
+
+User-agent: *
+Allow: /
+Allow: /llms.txt
+
+# OpenAI (ChatGPT & SearchGPT)
+User-agent: GPTBot
+Allow: /
+Allow: /llms.txt
+
+User-agent: ChatGPT-User
+Allow: /
+Allow: /llms.txt
+
+User-agent: OAI-SearchBot
+Allow: /
+Allow: /llms.txt
+
+# Google AI (Gemini / AI Overviews)
+User-agent: Google-Extended
+Allow: /
+Allow: /llms.txt
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+Allow: /llms.txt
+
+# Anthropic (Claude)
+User-agent: ClaudeBot
+Allow: /
+Allow: /llms.txt
+
+# Apple Intelligence
+User-agent: Applebot-Extended
+Allow: /
+Allow: /llms.txt
+
+Sitemap: https://clinicasantamariadosolivais.pt/sitemap.xml

@@ -106,17 +106,3 @@ export const LiquidCard = ({
     </div>
   );
 };
-
-export const LiquidPill = ({
-  children,
-  className = '',
-  ...props
-}: React.HTMLAttributes<HTMLSpanElement>) => {
-  return (
-    <span className={`liquid-pill ${className}`} {...props}>
-      <span style={{ position: 'relative', zIndex: 3, display: 'inline-flex', alignItems: 'center', gap: '0.375rem' }}>
-        {children}
-      </span>
-    </span>
-  );
-};
