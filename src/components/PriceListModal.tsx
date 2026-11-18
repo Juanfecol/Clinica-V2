@@ -106,7 +106,7 @@ export default function PriceListModal({
                   </p>
                 )}
               </div>
-              <span className="font-serif text-[14.5px] sm:text-[16px] font-semibold text-ink shrink-0 text-right whitespace-nowrap tabular-nums">
+              <span className="font-sans text-[14.5px] sm:text-[16px] font-semibold text-clinic-navy shrink-0 text-right whitespace-nowrap tabular-nums">
                 {item.price}
               </span>
             </div>

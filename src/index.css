@@ -81,6 +81,8 @@ html {
   background-color: var(--paper);
   color: var(--ink);
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -119,6 +121,12 @@ body {
   padding-right: clamp(1rem, 4.5vw, 4rem);
 }
 
+.display,
+.font-serif {
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+}
+
 .display {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 400;
@@ -145,6 +153,8 @@ body {
   letter-spacing: -0.02em;
   color: inherit;
   text-wrap: balance;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
 }
 
 .section-heading em {
@@ -159,6 +169,7 @@ body {
   text-transform: uppercase;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 /* Reference ease curve */

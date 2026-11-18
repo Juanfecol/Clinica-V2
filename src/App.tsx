@@ -14,8 +14,6 @@ import {
   ArrowUpRight,
   ArrowUp,
   CheckCircle2,
-  Calendar,
-  ShieldCheck,
 } from 'lucide-react';
 import { GOOGLE_REVIEWS } from './data/reviewsData';
 import {
@@ -1534,12 +1532,12 @@ export default function App() {
                     style={{ height: '1.75rem', width: '1.5px' }}
                   />
                 </span>
-                <div className="ml-auto font-serif text-sm sm:text-base tracking-widest">
-                  <span id="hero-step-num" className="text-paper">
+                <div className="ml-auto font-sans font-medium text-sm sm:text-base tracking-widest tabular-nums">
+                  <span id="hero-step-num" className="text-paper font-semibold">
                     {heroStep}
                   </span>
-                  <span className="text-paper/40 text-xs mx-1">/</span>
-                  <span className="text-paper/40 text-xs">03</span>
+                  <span className="text-paper/65 text-xs mx-1">/</span>
+                  <span className="text-paper/65 text-xs">03</span>
                 </div>
               </div>
             </div>
@@ -1600,7 +1598,7 @@ export default function App() {
           <div className="container-page">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-paper">
               <ModularReveal delay={1} enableMouseGlow className="border-t border-paper/25 pt-3 sm:pt-5 rounded-xl">
-                <p className="font-serif text-3xl sm:text-4xl md:text-6xl font-light mb-1 sm:mb-2">
+                <p className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight tabular-nums mb-1 sm:mb-2">
                   <AnimatedCounter target={10} prefix="+" duration={1200} />
                 </p>
                 <p className="eyebrow !text-[10px] sm:!text-[11.5px] !tracking-[0.14em] sm:!tracking-[0.22em] text-paper/75">
@@ -1608,7 +1606,7 @@ export default function App() {
                 </p>
               </ModularReveal>
               <ModularReveal delay={2} enableMouseGlow className="border-t border-paper/25 pt-3 sm:pt-5 rounded-xl">
-                <p className="font-serif text-3xl sm:text-4xl md:text-6xl font-light mb-1 sm:mb-2">
+                <p className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight tabular-nums mb-1 sm:mb-2">
                   <AnimatedCounter target={650} prefix="+" duration={1400} />
                 </p>
                 <p className="eyebrow !text-[10px] sm:!text-[11.5px] !tracking-[0.14em] sm:!tracking-[0.22em] text-paper/75">
@@ -1616,7 +1614,7 @@ export default function App() {
                 </p>
               </ModularReveal>
               <ModularReveal delay={3} enableMouseGlow className="border-t border-paper/25 pt-3 sm:pt-5 rounded-xl">
-                <p className="font-serif text-3xl sm:text-4xl md:text-6xl font-light mb-1 sm:mb-2">
+                <p className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight tabular-nums mb-1 sm:mb-2">
                   <AnimatedCounter
                     target={4.4}
                     decimals={1}
@@ -1629,7 +1627,7 @@ export default function App() {
                 </p>
               </ModularReveal>
               <ModularReveal delay={4} enableMouseGlow className="border-t border-paper/25 pt-3 sm:pt-5 rounded-xl">
-                <p className="font-serif text-3xl sm:text-4xl md:text-6xl font-light mb-1 sm:mb-2">
+                <p className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight tabular-nums mb-1 sm:mb-2">
                   <AnimatedCounter target={8} duration={1200} />
                 </p>
                 <p className="eyebrow !text-[10px] sm:!text-[11.5px] !tracking-[0.14em] sm:!tracking-[0.22em] text-paper/75">
@@ -1655,7 +1653,7 @@ export default function App() {
                   <span aria-hidden="true" className="text-ink/30 text-xs">
                     ·
                   </span>
-                  <span className="font-serif text-xs text-ink font-semibold tabular-nums tracking-wider">
+                  <span className="font-sans text-xs text-ink font-semibold tabular-nums tracking-wider">
                     {step3Active ? '03' : step2Active ? '02' : '01'}{' '}
                     <span className="text-muted font-normal">/ 03</span>
                   </span>
@@ -1760,8 +1758,8 @@ export default function App() {
                           />
 
                           <span
-                            className={`font-serif text-3xl sm:text-4xl md:text-[2.75rem] font-light leading-none tabular-nums shrink-0 select-none transition-opacity duration-200 ${
-                              isHighlighted ? 'text-clinic-navy opacity-100' : 'text-ink opacity-35'
+                            className={`font-sans text-2xl sm:text-3xl md:text-4xl font-medium leading-none tabular-nums shrink-0 select-none transition-opacity duration-200 ${
+                              isHighlighted ? 'text-clinic-navy opacity-100' : 'text-ink opacity-55'
                             }`}
                           >
                             {step.num}
@@ -1811,7 +1809,7 @@ export default function App() {
               <div>
                 <div className="flex items-center gap-3 mb-2 sm:mb-4">
                   <p className="eyebrow text-muted">{tr.tratamentosSection.eyebrow}</p>
-                  <span className="text-[11px] text-muted/70 tracking-widest font-mono tabular-nums">
+                  <span className="text-[11px] text-muted/85 tracking-widest font-sans font-medium tabular-nums">
                     · 09 {tr.tratamentosSection.specialtiesCount}
                   </span>
                 </div>
@@ -1821,7 +1819,7 @@ export default function App() {
               </div>
 
               <div className="hidden lg:flex items-center gap-5 shrink-0 pb-1">
-                <span className="font-serif text-sm text-ink font-semibold tabular-nums tracking-wider">
+                <span className="font-sans text-sm text-ink font-semibold tabular-nums tracking-wider">
                   {String(activeTreatmentIdx + 1).padStart(2, '0')}{' '}
                   <span className="text-muted font-normal">
                     / {String(TREATMENTS.length).padStart(2, '0')}
@@ -1905,7 +1903,7 @@ export default function App() {
 
               <div className="mt-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 flex-1 max-w-[220px]">
-                  <span className="font-serif text-xs text-ink font-semibold tabular-nums shrink-0">
+                  <span className="font-sans text-xs text-ink font-semibold tabular-nums shrink-0">
                     {String(activeTreatmentIdx + 1).padStart(2, '0')}{' '}
                     <span className="text-muted font-normal">
                       / {String(TREATMENTS.length).padStart(2, '0')}
@@ -2004,8 +2002,8 @@ export default function App() {
                       >
                         <div className="flex items-baseline gap-5 xl:gap-7 min-w-0 flex-1">
                           <span
-                            className={`font-serif text-xs xl:text-[13px] tabular-nums w-6 shrink-0 transition-colors duration-300 ${
-                              isActive ? 'text-clinic-navy font-semibold' : 'text-ink/45'
+                            className={`font-sans text-xs xl:text-[13px] tabular-nums w-6 shrink-0 transition-colors duration-300 ${
+                              isActive ? 'text-clinic-navy font-semibold' : 'text-ink/65 font-medium'
                             }`}
                           >
                             {t.number}
@@ -2129,7 +2127,7 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-4">
-                <span className="text-xs font-serif text-muted tracking-wider hidden sm:inline-block">
+                <span className="text-xs font-sans font-medium text-muted tracking-wider tabular-nums hidden sm:inline-block">
                   {tr.equipa.membersCount}
                 </span>
                 <div className="flex items-center gap-2">
@@ -2239,7 +2237,7 @@ export default function App() {
             </div>
 
             <div className="mt-4 sm:mt-8 flex items-center gap-3.5">
-              <span className="lg:hidden font-serif text-xs text-ink font-semibold tabular-nums shrink-0">
+              <span className="lg:hidden font-sans text-xs text-ink font-semibold tabular-nums shrink-0">
                 {String(activeTeamIdx + 1).padStart(2, '0')}{' '}
                 <span className="text-muted font-normal">
                   / {String(TEAM_MEMBERS.length).padStart(2, '0')}
@@ -2269,7 +2267,7 @@ export default function App() {
               <div>
                 <div className="flex items-center gap-3 mb-1.5 sm:mb-2">
                   <p className="eyebrow text-muted">{tr.clinica.eyebrow}</p>
-                  <span className="text-[11px] text-muted/70 tracking-widest font-mono">
+                  <span className="text-[11px] text-muted/85 tracking-widest font-sans font-medium tabular-nums">
                     {tr.clinica.spacesCount}
                   </span>
                 </div>
@@ -2279,7 +2277,7 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-3 w-full sm:w-auto max-w-[220px]">
-                <span className="font-serif text-xs text-ink font-semibold shrink-0">
+                <span className="font-sans text-xs text-ink font-semibold tabular-nums shrink-0">
                   {String(clinicaStepNum).padStart(2, '0')}{' '}
                   <span className="text-muted font-normal">
                     / {String(CLINICA_SPACES.length).padStart(2, '0')}
@@ -2321,7 +2319,7 @@ export default function App() {
                       </div>
                       <div className="pt-0.5 pb-1">
                         <p className="text-[13px] sm:text-sm text-ink font-medium tracking-tight leading-snug">
-                          <span className="font-serif text-sm mr-2 text-ink/75 tabular-nums">{space.num}</span>
+                          <span className="font-sans font-semibold text-xs sm:text-[13px] mr-2 text-clinic-navy tabular-nums">{space.num}</span>
                           <span>{localizedSpace.title}</span>
                         </p>
                       </div>
@@ -2387,7 +2385,7 @@ export default function App() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 lg:gap-12 items-start">
             <ModularReveal delay={1} className="lg:col-span-4">
               <div>
-                <p className="font-serif text-5xl sm:text-7xl md:text-8xl font-light tracking-tight mb-1.5 sm:mb-3 tabular-nums">
+                <p className="font-sans text-5xl sm:text-7xl md:text-8xl font-normal tracking-tight mb-1.5 sm:mb-3 tabular-nums">
                   4{tr.meta.decimalSeparator}4
                 </p>
                 <div className="flex items-center gap-1 text-[#eab308] text-xs mb-2 sm:mb-3">
@@ -2493,7 +2491,7 @@ export default function App() {
                 </LiquidCard>
 
                 <div className="border-t border-rule pt-3.5 mt-3.5 sm:pt-6 sm:mt-6 flex items-center justify-between">
-                  <div className="font-serif text-sm text-muted tabular-nums">
+                  <div className="font-sans font-medium text-sm text-muted tabular-nums">
                     <span id="review-counter" className="text-ink font-semibold">
                       {String(safeReviewIdx + 1).padStart(2, '0')}
                     </span>{' '}
@@ -2571,139 +2569,92 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Coluna Direita: Marcações Online em Tempo Real + Sobre a nossa avaliação */}
-                <div className="lg:col-span-7 p-6 sm:p-9 lg:p-11 flex flex-col justify-between space-y-6">
-                  {/* Topo: SMO Logo + Selo Marcações Online em Tempo Real */}
-                  <div className="space-y-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div className="inline-flex items-center gap-2.5">
-                        <img
-                          src="https://clinica-santa-maria-dos-olivais.b-cdn.net/logo_clinica_santa_maria_dos_olivais-removebg-preview.png"
-                          alt="SMO Logo"
-                          loading="lazy"
-                          decoding="async"
-                          className="h-10 sm:h-12 w-auto object-contain -ml-1 shrink-0"
-                        />
-                        <div className="flex flex-col justify-center font-sans leading-[1.18] tracking-wide select-none">
-                          <span className="text-[11.5px] sm:text-[13px] font-semibold">
-                            <span className="text-[#2d3277]">Clínica </span>
-                            <span className="text-[#8470be]">Santa Maria</span>
-                          </span>
-                          <span className="text-[11.5px] sm:text-[13px] font-semibold text-[#7a8e0e]">
-                            dos Olivais
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-clinic-navy/8 border border-clinic-navy/15">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                        </span>
-                        <span className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-clinic-navy">
-                          {tr.marcacao.realtimeBadge}
-                        </span>
-                      </div>
+                {/* Coluna Direita: Marcações Online em Tempo Real + Sobre a nossa avaliação (Diseño Editorial Simplificado) */}
+                <div className="lg:col-span-7 p-7 sm:p-10 lg:p-12 flex flex-col justify-between gap-7">
+                  {/* Encabezado limpio y respirable */}
+                  <div>
+                    <div className="inline-flex items-center gap-2 mb-3.5">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      </span>
+                      <span className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-clinic-navy/80">
+                        {tr.marcacao.realtimeBadge}
+                      </span>
                     </div>
 
-                    <div>
-                      <h2 className="font-serif text-3xl sm:text-4xl lg:text-[2.5rem] text-ink font-normal leading-tight">
-                        {tr.marcacao.cardTitleLead}<em className="text-clinic-navy">{tr.marcacao.cardTitleItalic}</em>
-                      </h2>
-                      <p className="text-xs sm:text-[14px] text-muted mt-2 leading-relaxed">
-                        {tr.marcacao.cardSubtitle}
-                      </p>
-                    </div>
+                    <h2 className="font-serif text-3xl sm:text-4xl lg:text-[2.6rem] text-ink font-normal leading-[1.12] tracking-tight">
+                      {tr.marcacao.cardTitleLead}
+                      <em className="text-clinic-navy">{tr.marcacao.cardTitleItalic}</em>
+                    </h2>
+                    <p className="text-xs sm:text-[14px] text-muted mt-2.5 leading-relaxed max-w-xl">
+                      {tr.marcacao.cardSubtitle}
+                    </p>
                   </div>
 
-                  {/* Caixa Central: Sobre a nossa avaliação */}
-                  <div className="rounded-2xl bg-white border border-rule p-5 sm:p-6 shadow-[0_8px_28px_rgba(30,34,88,0.05)] space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3.5 border-b border-rule/80">
+                  {/* Bloque Editorial de Evaluación: líneas finas sin cajas pesadas */}
+                  <div className="border-y border-rule py-6 space-y-5">
+                    <div className="flex flex-wrap items-baseline justify-between gap-4">
                       <div>
-                        <h3 className="font-serif text-xl sm:text-2xl text-clinic-navy font-normal">
+                        <h3 className="font-serif text-xl sm:text-2xl text-ink font-normal">
                           {tr.marcacao.evalTitle}
                         </h3>
-                        <p className="text-xs sm:text-[13px] text-ink/85 mt-0.5">
+                        <p className="text-xs text-muted mt-0.5">
                           {tr.marcacao.evalSubtitle}
                         </p>
                       </div>
 
-                      <div className="inline-flex items-baseline gap-1.5 bg-clinic-navy text-white px-4 py-2 rounded-2xl self-start sm:self-center shrink-0">
-                        <span className="text-[11px] uppercase tracking-wider text-white/75 font-medium">
+                      <div className="flex items-baseline gap-2 shrink-0">
+                        <span className="text-[10.5px] uppercase tracking-[0.12em] text-muted font-medium">
                           {tr.marcacao.costLabel}
                         </span>
-                        <span className="font-serif text-2xl font-semibold text-[#d4e157]">
+                        <span className="font-sans text-2xl sm:text-3xl text-clinic-navy font-semibold tracking-tight tabular-nums">
                           20€
                         </span>
                       </div>
                     </div>
 
-                    <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted mb-2.5">
-                        {tr.marcacao.includesLabel}
-                      </p>
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4 text-xs sm:text-[13px] text-ink">
-                        {tr.marcacao.includesItems.map((item, idx) => (
-                          <li key={idx} className="flex items-center gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-clinic-navy shrink-0" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-2.5 gap-x-6 text-xs sm:text-[13px] text-ink/85 pt-1">
+                      {tr.marcacao.includesItems.map((item, idx) => (
+                        <li key={idx} className="flex items-center gap-2.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-clinic-navy/75 shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
 
-                    <div className="pt-3 border-t border-rule/80 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                      <p className="text-xs sm:text-[13px] font-semibold text-clinic-navy">
-                        {tr.marcacao.evalQuestion}
-                      </p>
-                      <p className="text-[11px] text-muted italic">
-                        {tr.marcacao.evalFootnote}
-                      </p>
-                    </div>
+                    <p className="text-[11.5px] text-muted/85 italic">
+                      {tr.marcacao.evalFootnote}
+                    </p>
                   </div>
 
-                  {/* 3 Destaques de Confiança */}
-                  <div className="space-y-2.5 text-xs sm:text-[13px] text-ink/90">
-                    <div className="flex items-start gap-2.5">
-                      <CheckCircle2 className="w-4 h-4 text-clinic-navy shrink-0 mt-0.5" />
-                      <p>
-                        <strong className="text-ink">{tr.marcacao.highlight1Strong}</strong> {tr.marcacao.highlight1Text}
-                      </p>
-                    </div>
-                    <div className="flex items-start gap-2.5">
-                      <Calendar className="w-4 h-4 text-clinic-navy shrink-0 mt-0.5" />
-                      <p>
-                        <strong className="text-ink">{tr.marcacao.highlight2Strong}</strong> {tr.marcacao.highlight2Text}
-                      </p>
-                    </div>
-                    <div className="flex items-start gap-2.5">
-                      <ShieldCheck className="w-4 h-4 text-clinic-navy shrink-0 mt-0.5" />
-                      <p>
-                        <strong className="text-ink">{tr.marcacao.highlight3Strong}</strong> {tr.marcacao.highlight3Text}
-                      </p>
-                    </div>
-                  </div>
+                  {/* Botones de Acción (Liquid Glass) + Nota sutil de confirmación */}
+                  <div className="space-y-3.5">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                      <LiquidButton
+                        type="button"
+                        onClick={() => handleBookingSubmit()}
+                        variant="lime"
+                        className="flex-1 !py-3.5 sm:!py-4 !px-6 text-center !text-xs sm:!text-[13.5px] !font-semibold flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                      >
+                        <MessageCircle size={16} strokeWidth={2.1} />
+                        <span>{tr.marcacao.submitWhatsApp}</span>
+                      </LiquidButton>
 
-                  {/* Botões de Ação (Liquid Glass) */}
-                  <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-                    <LiquidButton
-                      type="button"
-                      onClick={() => handleBookingSubmit()}
-                      variant="lime"
-                      className="flex-1 !py-4 !px-6 text-center !text-xs sm:!text-[13.5px] !font-semibold flex items-center justify-center gap-2 shadow-lg cursor-pointer"
-                    >
-                      <MessageCircle size={16} strokeWidth={2.2} />
-                      <span>{tr.marcacao.submitWhatsApp}</span>
-                    </LiquidButton>
+                      <LiquidButton
+                        href="tel:+351300601645"
+                        variant="primary"
+                        className="!py-3.5 sm:!py-4 !px-6 text-center !text-xs sm:!text-[13.5px] !font-semibold flex items-center justify-center gap-2 tabular-nums shrink-0"
+                      >
+                        <Phone size={15} strokeWidth={2} />
+                        <span>{tr.marcacao.phoneBtn}</span>
+                      </LiquidButton>
+                    </div>
 
-                    <LiquidButton
-                      href="tel:+351300601645"
-                      variant="primary"
-                      className="!py-4 !px-6 text-center !text-xs sm:!text-[13.5px] !font-semibold flex items-center justify-center gap-2 tabular-nums shrink-0"
-                    >
-                      <Phone size={15} strokeWidth={2} />
-                      <span>{tr.marcacao.phoneBtn}</span>
-                    </LiquidButton>
+                    <p className="text-[11.5px] text-muted text-center sm:text-left">
+                      <span className="font-medium text-ink/85">{tr.marcacao.highlight1Strong}</span>{' '}
+                      {tr.marcacao.highlight1Text}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -2759,7 +2710,7 @@ export default function App() {
                       <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent" />
                       <div className="absolute bottom-3.5 left-3.5 right-3.5 sm:bottom-5 sm:left-5 sm:right-5 flex items-end justify-between gap-2">
                         <div>
-                          <p className="font-serif text-lg sm:text-2xl text-paper leading-tight mb-2 sm:mb-3">
+                          <p className="font-sans font-medium text-base sm:text-xl text-paper leading-tight mb-2 sm:mb-3">
                             Estrada de Moscavide N 32C
                             <br />
                             Lisboa
@@ -2787,11 +2738,14 @@ export default function App() {
                   ) : (
                     <div id="map-embed" className="absolute inset-0">
                       <iframe
-                        src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3112.952242496215!2d-9.142685!3d38.722252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd19338210000001%3A0x0!2sLisboa!5e0!3m2!1s${locale}!2spt!4v1700000000000`}
-                        title="Google Maps Lisboa"
-                        className="w-full h-full border-0 grayscale contrast-125"
+                        src={`https://maps.google.com/maps?q=${encodeURIComponent(
+                          'Clínica Dentária Santa Maria dos Olivais, Estrada de Moscavide 32C, 1800-279 Lisboa, Portugal'
+                        )}&hl=${locale}&z=16&output=embed`}
+                        title="Clínica Dentária Santa Maria dos Olivais — Estrada de Moscavide N 32C, 1800-279 Lisboa"
+                        className="w-full h-full border-0"
                         allowFullScreen
                         loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
                       />
                     </div>
                   )}
@@ -2923,7 +2877,7 @@ export default function App() {
                     <span>{tr.footer.visitEyebrow}</span>
                   </p>
                   <div className="space-y-1 text-[13.5px] leading-relaxed">
-                    <p className="font-serif text-lg text-ink font-normal leading-snug">
+                    <p className="font-sans text-base text-ink font-semibold leading-snug">
                       Estrada de Moscavide N 32C
                     </p>
                     <p className="text-muted">1800-279 · Lisboa, Portugal</p>
@@ -2975,7 +2929,7 @@ export default function App() {
                     </p>
                     <a
                       href="tel:+351300601645"
-                      className="font-serif text-xl sm:text-[22px] text-clinic-navy hover:text-ink transition-colors tabular-nums leading-tight inline-block"
+                      className="font-sans text-lg sm:text-xl font-semibold text-clinic-navy hover:text-ink transition-colors tabular-nums leading-tight inline-block"
                     >
                       300 601 645
                     </a>
