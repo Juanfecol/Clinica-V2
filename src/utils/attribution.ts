@@ -12,10 +12,21 @@ export interface AttributionData {
   fbc: string;
   referrer: string;
   landing_page: string;
+  event_source_url: string;
   captured_at: string;
 }
 
 const STORAGE_KEY = 'smo_first_party_attribution';
+const DEFAULT_EVENT_SOURCE_URL = 'https://clinicadentariasantamariadosolivais.pt/';
+
+function getCleanEventSourceUrl(): string {
+  if (typeof window === 'undefined') return DEFAULT_EVENT_SOURCE_URL;
+  try {
+    return `${window.location.origin}${window.location.pathname || '/'}`;
+  } catch {
+    return DEFAULT_EVENT_SOURCE_URL;
+  }
+}
 
 function readCookie(name: string): string {
   if (typeof document === 'undefined' || !document.cookie) return '';
@@ -26,7 +37,7 @@ function readCookie(name: string): string {
 
 /**
  * Captura de forma segura y legal en sessionStorage (First-Party) los parámetros de atribución
- * publicitaria (UTM, fbclid, gclid, gbraid, wbraid, _fbp, _fbc y referrer).
+ * publicitaria (UTM, fbclid, gclid, gbraid, wbraid, _fbp, _fbc, event_source_url y referrer).
  */
 export function initAttributionTracker(): AttributionData {
   const empty: AttributionData = {
@@ -42,7 +53,8 @@ export function initAttributionTracker(): AttributionData {
     fbp: '',
     fbc: '',
     referrer: '',
-    landing_page: '',
+    landing_page: DEFAULT_EVENT_SOURCE_URL,
+    event_source_url: DEFAULT_EVENT_SOURCE_URL,
     captured_at: new Date().toISOString(),
   };
 
@@ -63,6 +75,8 @@ export function initAttributionTracker(): AttributionData {
       fbcCookie = `fb.1.${Date.now()}.${fbclidParam}`;
     }
 
+    const cleanSourceUrl = getCleanEventSourceUrl();
+
     const updated: AttributionData = {
       utm_source: params.get('utm_source') || existing.utm_source || '',
       utm_medium: params.get('utm_medium') || existing.utm_medium || '',
@@ -76,7 +90,8 @@ export function initAttributionTracker(): AttributionData {
       fbp: fbpCookie,
       fbc: fbcCookie,
       referrer: existing.referrer || document.referrer || 'direct',
-      landing_page: existing.landing_page || window.location.href,
+      landing_page: existing.landing_page || cleanSourceUrl,
+      event_source_url: cleanSourceUrl,
       captured_at: existing.captured_at || new Date().toISOString(),
     };
 
@@ -99,10 +114,13 @@ export function getStoredAttribution(): AttributionData {
     const raw = window.sessionStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as AttributionData;
+      const cleanSourceUrl = getCleanEventSourceUrl();
       return {
         ...parsed,
         fbp: parsed.fbp || readCookie('_fbp') || '',
         fbc: parsed.fbc || readCookie('_fbc') || '',
+        landing_page: parsed.landing_page || cleanSourceUrl,
+        event_source_url: parsed.event_source_url || cleanSourceUrl,
       };
     }
   } catch {

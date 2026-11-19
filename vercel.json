@@ -1,0 +1,23 @@
+{
+  "headers": [
+    {
+      "source": "/cuidados-pos-operatorios.pdf",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/pdf"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"Cuidados-Pos-Operatorios-Clinica-Santa-Maria-dos-Olivais.pdf\""
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!api/|assets/|robots\\.txt|llms\\.txt|banner-video\\.mp4|cuidados-pos-operatorios\\.pdf).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

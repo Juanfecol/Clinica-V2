@@ -89,7 +89,12 @@ export function trackLeadConversion(data: LeadConversionPayload): void {
   const safeCategory = sanitizeTreatmentForMeta(data.tratamento);
   const value = getEstimatedLeadValue(data.tratamento, data.valorEstimado);
 
-  // a) Meta Pixel 1754959305395666 — Evento 'Lead' sanitizado
+  const eventSourceUrl =
+    typeof window !== 'undefined' && window.location
+      ? `${window.location.origin}${window.location.pathname || '/'}`
+      : 'https://clinicadentariasantamariadosolivais.pt/';
+
+  // a) Meta Pixel 1754959305395666 — Evento 'Lead' sanitizado con event_source_url
   try {
     if (typeof window.fbq === 'function') {
       window.fbq('track', 'Lead', {
@@ -97,6 +102,7 @@ export function trackLeadConversion(data: LeadConversionPayload): void {
         content_category: 'Serviços de Medicina Dentária',
         value,
         currency: 'EUR',
+        event_source_url: eventSourceUrl,
       });
     }
   } catch {
@@ -131,6 +137,7 @@ export function trackLeadConversion(data: LeadConversionPayload): void {
       content_category: 'Serviços de Medicina Dentária',
       value,
       currency: 'EUR',
+      event_source_url: eventSourceUrl,
     });
   } catch {
     // Silencioso
@@ -145,6 +152,10 @@ export function trackWhatsAppClick(tratamento?: string): void {
 
   const safeCategory = sanitizeTreatmentForMeta(tratamento);
   const value = getEstimatedLeadValue(tratamento);
+  const eventSourceUrl =
+    typeof window !== 'undefined' && window.location
+      ? `${window.location.origin}${window.location.pathname || '/'}`
+      : 'https://clinicadentariasantamariadosolivais.pt/';
 
   try {
     if (typeof window.fbq === 'function') {
@@ -153,6 +164,7 @@ export function trackWhatsAppClick(tratamento?: string): void {
         content_category: 'Serviços de Medicina Dentária',
         value,
         currency: 'EUR',
+        event_source_url: eventSourceUrl,
       });
     }
   } catch {

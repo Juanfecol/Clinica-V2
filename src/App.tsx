@@ -375,12 +375,89 @@ export default function App() {
     }
   }, [tr.meta.title, tr.meta.description]);
 
+  const [isPostOpModalOpen, setIsPostOpModalOpen] = useState<boolean>(false);
+
+  const triggerPostOpPdfBlobDownload = () => {
+    fetch('/cuidados-pos-operatorios.pdf')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch local PDF');
+        return res.arrayBuffer();
+      })
+      .then((buffer) => {
+        // Use application/octet-stream so Chrome inside an iframe forces a file download
+        // instead of invoking the built-in PDF viewer inside a cross-origin iframe.
+        const blob = new Blob([buffer], { type: 'application/octet-stream' });
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = 'Cuidados-Pos-Operatorios-Clinica-Santa-Maria-dos-Olivais.pdf';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+      })
+      .catch(() => {
+        // Silent fallback
+      });
+  };
+
   // First-Party Attribution Tracker (UTM, fbclid, gclid, gbraid, wbraid, _fbp, _fbc, referrer)
   useEffect(() => {
     initAttributionTracker();
     // Expose acceptCookies globally so any external consent trigger can invoke it without altering UI
     (window as unknown as { acceptCookies?: () => void }).acceptCookies = acceptCookies;
+
+    // Si el usuario entra directamente a /cuidados-pos-operatorios,
+    // abre el documento oficial y descarga el PDF como octet-stream sin bloquear el iframe.
+    const cleanPath = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+    if (cleanPath === '/cuidados-pos-operatorios') {
+      setIsPostOpModalOpen(true);
+      triggerPostOpPdfBlobDownload();
+    }
+
+    const handlePopState = () => {
+      const currentPath = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+      setIsPostOpModalOpen(currentPath === '/cuidados-pos-operatorios');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  const postOpPdfLabel =
+    locale === 'es'
+      ? 'Cuidados Postoperatorios (PDF)'
+      : locale === 'en'
+        ? 'Post-Operative Care (PDF)'
+        : locale === 'fr'
+          ? 'Soins Post-Opératoires (PDF)'
+          : locale === 'de'
+            ? 'Postoperative Pflege (PDF)'
+            : locale === 'it'
+              ? 'Cure Post-Operatorie (PDF)'
+              : 'Cuidados Pós-Operatórios (PDF)';
+
+  const handleDownloadPostOpPdf = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    try {
+      window.history.pushState({}, '', '/cuidados-pos-operatorios');
+    } catch {
+      // Ignore history error in restricted environments
+    }
+    setIsPostOpModalOpen(true);
+    triggerPostOpPdfBlobDownload();
+  };
+
+  const handleClosePostOpModal = () => {
+    setIsPostOpModalOpen(false);
+    try {
+      if (window.location.pathname.replace(/\/+$/, '').toLowerCase() === '/cuidados-pos-operatorios') {
+        window.history.pushState({}, '', '/');
+      }
+    } catch {
+      // Ignore
+    }
+  };
 
   // Booking state for background GoHighLevel + Meta/Google Ads lead capture
   const [bookingName] = useState<string>('');
@@ -3021,6 +3098,17 @@ export default function App() {
                       {tr.footer.navMarcacao}
                     </a>
                   </li>
+                  <li>
+                    <a
+                      href="/cuidados-pos-operatorios"
+                      onClick={handleDownloadPostOpPdf}
+                      download="Cuidados-Pos-Operatorios-Clinica-Santa-Maria-dos-Olivais.pdf"
+                      className="link-underline py-0.5 inline-flex items-center gap-1 font-medium text-clinic-navy"
+                    >
+                      <span>{postOpPdfLabel}</span>
+                      <ArrowUpRight size={12} strokeWidth={1.8} />
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -3032,6 +3120,18 @@ export default function App() {
               <p className="leading-relaxed text-ink/80">{tr.footer.legalClinicLine}</p>
 
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2 shrink-0">
+                <a
+                  href="/cuidados-pos-operatorios"
+                  onClick={handleDownloadPostOpPdf}
+                  download="Cuidados-Pos-Operatorios-Clinica-Santa-Maria-dos-Olivais.pdf"
+                  className="inline-flex items-center gap-1 link-underline py-0.5 text-clinic-navy font-medium hover:text-ink transition"
+                >
+                  <span>{postOpPdfLabel}</span>
+                  <ArrowUpRight size={12} strokeWidth={1.8} />
+                </a>
+                <span aria-hidden="true" className="hidden sm:inline text-rule">
+                  ·
+                </span>
                 <a
                   href="https://www.livroreclamacoes.pt"
                   target="_blank"
@@ -3122,6 +3222,114 @@ export default function App() {
         onClose={() => setIsPrivacyModalOpen(false)}
         locale={locale}
       />
+
+      {/* Documento Oficial de Cuidados Pós-Operatórios (/cuidados-pos-operatorios) */}
+      {isPostOpModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="postop-modal-title"
+          className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-6 bg-ink/70 backdrop-blur-md animate-fade-in"
+          onClick={handleClosePostOpModal}
+        >
+          <div
+            className="relative w-full max-w-2xl max-h-[90vh] bg-paper text-ink rounded-3xl border border-rule shadow-[0_28px_80px_rgba(0,0,0,0.45)] overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Cabecera del documento */}
+            <div className="px-5 sm:px-8 py-4 sm:py-5 border-b border-rule flex items-center justify-between gap-4 bg-white">
+              <div className="flex items-center gap-3">
+                <img
+                  src="https://clinica-santa-maria-dos-olivais.b-cdn.net/logo_clinica_santa_maria_dos_olivais-removebg-preview.png"
+                  alt="Clínica Santa Maria dos Olivais"
+                  className="h-10 sm:h-12 w-auto object-contain shrink-0"
+                />
+                <div>
+                  <p className="text-[10.5px] uppercase tracking-[0.14em] text-clinic-navy font-semibold">
+                    Clínica Santa Maria dos Olivais
+                  </p>
+                  <h2
+                    id="postop-modal-title"
+                    className="font-serif text-xl sm:text-2xl text-ink font-normal leading-tight"
+                  >
+                    Cuidados Pós-Operatórios
+                  </h2>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleClosePostOpModal}
+                aria-label="Fechar"
+                className="w-9 h-9 rounded-full bg-stone hover:bg-clinic-navy text-ink hover:text-white transition-colors flex items-center justify-center text-sm font-semibold cursor-pointer shrink-0"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Contenido íntegro del PDF oficial CUIDADOS POS OPERATORIOS.pdf */}
+            <div className="px-5 sm:px-8 py-5 sm:py-6 overflow-y-auto flex-1 space-y-3.5 text-xs sm:text-[13.5px] leading-relaxed text-ink/90">
+              {[
+                'Repouso durante as 24 a 48h após a cirurgia. Foi submetido a uma cirurgia, o corpo reage ao trauma. Promover o estilo de vida calmo e sem recrutamento de força corporal intensa e vigorosa.',
+                'Evitar fumar durante o máximo de tempo possível após a cirurgia (24h a 48h idealmente como mínimo).',
+                'Evitar cuspir ou bochechar. Manter a zona com material de compressão fornecido na cirurgia.',
+                'Seguir o protocolo do receituário, tentando cumprir com as horas de toma. Em caso de esquecimento não duplicar a dose, mas fazer a toma da medicação logo que possível.',
+                'Fazer gelo de contacto durante as 72h após a cirurgia com renovação constante. Esta é a medida mais importante para evitar edema (inchaço) e consequentemente dor.',
+                'Evitar exercício físico durante 15 dias no mínimo, autorização de retoma da actividade normal dada pelo médico.',
+                'Durante o dia da cirurgia ingerir preferencialmente alimentos frios, se foi submetido(a) a alguma extração dentária.',
+                'Ao fim de 8 dias, são removidos os pontos em consulta de avaliação previamente marcada no dia da cirurgia.',
+                'É comum no período pós-operatório possam aparecer lesões aftosas (aftas).',
+              ].map((instruction, idx) => (
+                <div key={idx} className="flex items-start gap-3 pb-2.5 border-b border-rule/60 last:border-b-0">
+                  <span className="font-sans font-semibold text-clinic-navy tabular-nums shrink-0 mt-0.5">
+                    {idx + 1}.
+                  </span>
+                  <p>{instruction}</p>
+                </div>
+              ))}
+
+              <div className="pt-2 text-xs text-muted space-y-1">
+                <p>
+                  A equipa clínica (médicos e assistentes) encontra-se ao dispor durante o horário de
+                  funcionamento (9h–19h) nos contactos abaixo descritos:
+                </p>
+                <p className="font-sans font-semibold text-ink tabular-nums">
+                  Contactos: 919 861 310 | 211 350 066 · WhatsApp: +351 912 907 024
+                </p>
+              </div>
+            </div>
+
+            {/* Pie con descarga directa del PDF y enlace externo en pestaña nueva */}
+            <div className="px-5 sm:px-8 py-4 bg-white border-t border-rule flex flex-wrap items-center justify-between gap-3">
+              <span className="text-[11px] text-muted font-sans truncate">
+                clinicadentariasantamariadosolivais.pt/cuidados-pos-operatorios
+              </span>
+
+              <div className="flex flex-wrap items-center gap-2.5">
+                <LiquidButton
+                  type="button"
+                  variant="primary"
+                  onClick={triggerPostOpPdfBlobDownload}
+                  className="!px-5 !py-2.5 !text-xs !font-semibold cursor-pointer"
+                >
+                  <span>Descarregar PDF</span>
+                </LiquidButton>
+
+                <LiquidButton
+                  href="https://clinica-santa-maria-dos-olivais.b-cdn.net/CUIDADOS%20POS%20OPERATORIOS.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="secondary"
+                  className="!px-4 !py-2.5 !text-xs !font-semibold !text-ink inline-flex items-center gap-1"
+                >
+                  <span>Abrir PDF</span>
+                  <ArrowUpRight size={13} strokeWidth={1.8} />
+                </LiquidButton>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

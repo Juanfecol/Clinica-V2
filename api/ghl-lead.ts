@@ -1,6 +1,10 @@
+import { createHash } from 'crypto';
+
 const GHL_LOCATION_ID = 'gfTxFynWnzP12lVZbIc4';
 const GHL_PIPELINE_ID = 'w6AOtRMa1yb7USrRQGBh';
 const GHL_STAGE_NEW_LEAD_ID = '799faf32-5f74-48fc-9b3b-d8ac480c5700';
+const META_PIXEL_ID = '1754959305395666';
+const DEFAULT_EVENT_SOURCE_URL = 'https://clinicadentariasantamariadosolivais.pt/';
 
 interface AttributionInput {
   utm_source?: string;
@@ -16,6 +20,7 @@ interface AttributionInput {
   fbc?: string;
   referrer?: string;
   landing_page?: string;
+  event_source_url?: string;
 }
 
 interface GhlLeadBody {
@@ -30,6 +35,7 @@ interface GhlLeadBody {
 interface VercelLikeRequest {
   method?: string;
   body?: GhlLeadBody | string;
+  headers?: Record<string, string | string[] | undefined>;
 }
 
 interface VercelLikeResponse {
@@ -56,6 +62,20 @@ export function normalizePortuguesePhone(rawPhone?: string): string {
     return `+351${cleaned}`;
   }
   return `+351${cleaned}`;
+}
+
+function sanitizeEventSourceUrl(rawUrl?: string): string {
+  if (!rawUrl) return DEFAULT_EVENT_SOURCE_URL;
+  try {
+    const parsed = new URL(rawUrl);
+    return `${parsed.origin}${parsed.pathname || '/'}`;
+  } catch {
+    return DEFAULT_EVENT_SOURCE_URL;
+  }
+}
+
+function sha256Lower(value: string): string {
+  return createHash('sha256').update(value.trim().toLowerCase()).digest('hex');
 }
 
 function buildTreatmentTag(tratamento?: string): string {
@@ -130,11 +150,50 @@ export default async function handler(req: VercelLikeRequest, res: VercelLikeRes
   const dia = (body.dia || 'Qualquer dia').trim();
   const hora = (body.hora || 'Qualquer horário').trim();
   const attribution = body.attribution || {};
+  const cleanEventSourceUrl = sanitizeEventSourceUrl(
+    attribution.event_source_url || attribution.landing_page
+  );
+  const monetaryValue = getMonetaryValueForTreatment(tratamento);
+
+  // Envío directo opcional a Meta Conversions API (si META_CAPI_ACCESS_TOKEN está configurado)
+  // incluyendo siempre event_source_url obligatorio.
+  const metaCapiToken = process.env.META_CAPI_ACCESS_TOKEN;
+  if (metaCapiToken && normalizedPhone) {
+    const digitsOnlyPhone = normalizedPhone.replace(/\D/g, '');
+    const clientUserAgent =
+      (typeof req.headers?.['user-agent'] === 'string' ? req.headers['user-agent'] : '') || undefined;
+
+    await fetch(`https://graph.facebook.com/v21.0/${META_PIXEL_ID}/events?access_token=${encodeURIComponent(metaCapiToken)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        data: [
+          {
+            event_name: 'Lead',
+            event_time: Math.floor(Date.now() / 1000),
+            action_source: 'website',
+            event_source_url: cleanEventSourceUrl,
+            user_data: {
+              ph: [sha256Lower(digitsOnlyPhone)],
+              fbp: attribution.fbp || undefined,
+              fbc: attribution.fbc || undefined,
+              client_user_agent: clientUserAgent,
+            },
+            custom_data: {
+              currency: 'EUR',
+              value: monetaryValue,
+            },
+          },
+        ],
+      }),
+    }).catch(() => {});
+  }
 
   const apiKey = process.env.GHL_API_KEY;
   if (!apiKey || !normalizedPhone) {
     res.status(200).json({
       ok: true,
+      event_source_url: cleanEventSourceUrl,
       skipped: !apiKey ? 'missing_ghl_api_key' : 'missing_phone',
     });
     return;
@@ -166,7 +225,7 @@ export default async function handler(req: VercelLikeRequest, res: VercelLikeRes
   };
 
   try {
-    // 1. Upsert del contacto en GoHighLevel
+    // 1. Upsert del contacto en GoHighLevel (siempre con attributionSource.url = event_source_url)
     const upsertResponse = await fetch('https://services.leadconnectorhq.com/contacts/upsert', {
       method: 'POST',
       headers,
@@ -188,8 +247,10 @@ export default async function handler(req: VercelLikeRequest, res: VercelLikeRes
           utmTerm: attribution.utm_term || undefined,
           fbclid: attribution.fbclid || undefined,
           gclid: attribution.gclid || undefined,
+          fbp: attribution.fbp || undefined,
+          fbc: attribution.fbc || undefined,
           referrer: attribution.referrer || undefined,
-          url: attribution.landing_page || undefined,
+          url: cleanEventSourceUrl,
         },
       }),
     });
@@ -201,7 +262,6 @@ export default async function handler(req: VercelLikeRequest, res: VercelLikeRes
 
     // 2. Creación de la oportunidad en Marketing Pipeline -> Stage New Lead
     if (contactId) {
-      const monetaryValue = getMonetaryValueForTreatment(tratamento);
       await fetch('https://services.leadconnectorhq.com/opportunities/upsert', {
         method: 'POST',
         headers,
@@ -220,6 +280,7 @@ export default async function handler(req: VercelLikeRequest, res: VercelLikeRes
     res.status(200).json({
       ok: true,
       contactId: contactId || null,
+      event_source_url: cleanEventSourceUrl,
     });
   } catch {
     res.status(200).json({
